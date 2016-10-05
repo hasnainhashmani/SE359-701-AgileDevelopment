@@ -1,4 +1,4 @@
-<project name="cleansweep" default="" basedir=".">
+<project name="cleansweep" default="compile" basedir=".">
 	<description>
 		Ant build file for group 7 Clean Sweep
 	</description>
