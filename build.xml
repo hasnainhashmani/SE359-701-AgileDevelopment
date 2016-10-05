@@ -1,0 +1,20 @@
+<project name="cleansweep" default="" basedir=".">
+	<description>
+		Ant build file for group 7 Clean Sweep
+	</description>
+	
+	<target name="init">
+		<tstamp/>
+		<mkdir dir="bin"/>
+	</target>
+
+	<target name="compile" depends="init" description="compile the source" >
+		<javac includeantruntime="false" srcdir="src" destdir="bin" debug="on">
+		</javac>
+	</target>
+	
+	<target name="clean">
+		<delete dir="bin"/>
+	</target>
+	
+</project>
