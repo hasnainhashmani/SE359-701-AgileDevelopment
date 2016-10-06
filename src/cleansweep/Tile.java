@@ -1,3 +1,5 @@
+package cleansweep;
+
 public class Tile {
 	//handles carpet type, dirt level, and obstacle on the floor.
 	public final int CARPET_BARE = 0;

@@ -27,7 +27,7 @@
 			<classpath location="bin" />
 			<classpath refid="junit.classpath"/>
 			<formatter type="plain"/>
-			<test name="TileTest"/>
+			<test name="cleansweeptests.TileTest"/>
 		</junit>
 	</target>
 	
