@@ -34,8 +34,8 @@ public class Tile {
 		return carpet;
 	}
 	
-	public int getDirtLevel(){
-		return dirtLevel;
+	public boolean hasDirt(){
+		return dirtLevel>0;
 	}
 	
 	public int getObstacleType(){

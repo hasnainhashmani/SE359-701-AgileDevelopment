@@ -7,6 +7,12 @@
 		<tstamp/>
 		<mkdir dir="bin"/>
 	</target>
+		
+	<path id="junit.classpath">
+		<fileset dir="${junit}">
+			<include name="*.jar" />
+		</fileset>
+	</path>
 
 	<target name="compile" depends="init" description="compile the source" >
 		<javac includeantruntime="false" srcdir="src" destdir="bin" debug="on">
