@@ -7,8 +7,6 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 import org.junit.runner.RunWith;
 
-import Tile;
-
 public class TileTest {
 	//simple test to verify all the tile functions work
 	//this one might not be necessary eventually but it also verifies that JUnit works on my machine

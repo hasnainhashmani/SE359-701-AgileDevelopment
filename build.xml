@@ -9,7 +9,7 @@
 	</target>
 		
 	<path id="junit.classpath">
-		<fileset dir="${junit}">
+		<fileset dir="junit">
 			<include name="*.jar" />
 		</fileset>
 	</path>
@@ -17,6 +17,18 @@
 	<target name="compile" depends="init" description="compile the source" >
 		<javac includeantruntime="false" srcdir="src" destdir="bin" debug="on">
 		</javac>
+        
+       <javac includeantruntime="false" srcdir="tests" destdir="bin" debug="on">
+		</javac>
+	</target>
+    
+	<target name="test" depends="compile">
+		<junit>
+			<classpath location="bin" />
+			<classpath refid="junit.classpath"/>
+			<formatter type="plain"/>
+			<test name="TileTest"/>
+		</junit>
 	</target>
 	
 	<target name="clean">

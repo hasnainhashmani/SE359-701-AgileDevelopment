@@ -18,14 +18,14 @@ public class Tile {
 		this.obstacleType=0;
 	}
 	
-	public Tile(int carpetType, int dirt, int obstable){
+	public Tile(int carpetType, int dirt, int obstacle){
 		this.carpet=carpetType;
 		this.dirtLevel=dirt;
 		this.obstacleType=obstacle;
 	}
 	
 	public void cleanTile(){
-		if (dirtLevel<=0) throw new Exception(); //TODO exception type
+		//if (dirtLevel<=0) throw new Exception(); //TODO exception type
 		dirtLevel--;
 	}
 	
