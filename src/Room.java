@@ -11,7 +11,7 @@ public class Room {
 	
 	public void clean(int x, int y){
 		//TODO
-	}
+	} 
 	
 	
 	
