@@ -1,0 +1,56 @@
+<?xml version="1.0"?>
+
+<project name="SE359/459 Ant-Test" default="testAll" basedir=".">
+	<tstamp/> <!-- Create the time stamp -->
+
+	
+	<!-- Sets variables which can later be used. -->
+	<!-- The value of a property is accessed via ${} -->
+	<property name="src.dir" location="src" />
+	<property name="build.dir" location="bin" />
+	<property name="dist.dir" location="dist" />
+	<property name="docs.dir" location="docs" />
+	
+	<!-- Deletes the existing build, docs and dist directory-->
+	<target name="clean">
+		<delete dir="${build.dir}" />
+		<delete dir="${docs.dir}" />
+		<delete dir="${dist.dir}" />
+	</target>
+	
+	<!-- Creates the  build, docs and dist directory-->
+	<target name="makedir">
+		<mkdir dir="${build.dir}" />
+		<mkdir dir="${docs.dir}" />
+		<mkdir dir="${dist.dir}" />
+	</target>
+	
+	<target name="testAll" depends="compile">
+		<junit printsummary="yes" fork="yes">
+			<test name="edu.project.test.RoomTest"/>
+			
+			<classpath>
+				<pathelement location="C:\Users\treas\Documents\Java\Junit\junit-4.12.jar"/>
+				<pathelement location="C:\Users\treas\Documents\Java\Junit\hamcrest-core-1.3.jar"/>
+				<pathelement location="bin"/>				
+			</classpath>
+			
+			<formatter type="plain"/>
+		</junit>
+	</target>
+
+	
+	<!-- Compiles the java code (including the usage of library for JUnit -->
+	<target name="compile" depends="clean, makedir">
+		<javac includeantruntime="false"  
+			srcdir="${src.dir}" 
+			destdir="${build.dir}" 
+			debug="on">
+			
+			<classpath location="C:\Users\treas\Documents\Java\Junit\junit-4.12.jar"/>
+			<classpath location="C:\Users\treas\Documents\Java\Junit\hamcrest-core-1.3.jar"/>
+
+		</javac>	
+	</target>
+
+</project>
