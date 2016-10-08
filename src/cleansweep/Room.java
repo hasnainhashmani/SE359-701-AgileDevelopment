@@ -64,7 +64,7 @@ public class Room {
 			List<Tile> row = floor.get(y);
 			for(int x=0; x<row.size(); x++){
 				if (walls.get(y*2).get(x)>0){
-					s+="__"; //TODO doors
+					s+=" _"; //TODO doors
 				}
 				else{
 					s+="  ";
@@ -88,7 +88,7 @@ public class Room {
 		}
 		for(int x=0; x<w; x++){
 			if (walls.get(h*2).get(x)>0){
-				s+="__"; //TODO doors
+				s+=" _"; //TODO doors
 			}
 			else{s+="  ";}
 		}

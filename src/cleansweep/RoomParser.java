@@ -40,13 +40,17 @@ public class RoomParser {
 	public static Room parseFile(String filename) throws IOException {
 		try{
 			FileInputStream f = new FileInputStream(filename);
-			f.skip(18);
-			byte[] buffer = new byte[4];		
+			f.skip(10);
+			byte[] buffer = new byte[4];
+			f.read(buffer);
+			int offset = byteLEtoInt(buffer); 
+			//System.out.println(offset);
+			f.skip(4);
 			f.read(buffer);
 			int xSize = byteLEtoInt(buffer);
 			f.read(buffer);
 			int ySize = byteLEtoInt(buffer);
-			f.skip(28);
+			f.skip(offset-26);
 			
 			Room r = new Room((xSize-1)/2,(ySize-1)/2);
 			Tile[] tilequeue = new Tile[((xSize-1)/2)*((ySize-1)/2)];
