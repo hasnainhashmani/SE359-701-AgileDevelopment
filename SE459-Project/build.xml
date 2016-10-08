@@ -1,0 +1,55 @@
+<?xml version="1.0"?>
+<!-- To run build.xml change Classpath and Pathelement locations to your Junit and Hamcrest path locations -->
+
+<project name="SE359/459 Ant-Test" default="testAll" basedir=".">
+	<tstamp/> <!-- Create the time stamp -->
+	
+	
+	<!-- Sets variables which can later be used. -->
+	<!-- The value of a property is accessed via ${} -->
+	<property name="src.dir" location="src" />
+	<property name="build.dir" location="bin" />
+	<property name="junit.dir" location="C:\Users\treas\Documents\Java\Junit" />
+
+	
+	<!-- Deletes the existing build, docs and dist directory-->
+	<target name="clean">
+		<delete dir="${build.dir}" />
+	</target>
+	
+	<!-- Creates the  build, docs and dist directory-->
+	<target name="init">
+		<mkdir dir="${build.dir}" />		
+	</target>
+	
+	<!-- Junit path-->
+	<path id="junit.classpath">
+		<fileset dir="${junit.dir}">
+			<include name="*.jar" />
+		</fileset>
+	</path>
+	
+	<!-- Compiles the java code (including the usage of library for JUnit -->
+	<target name="compile" depends="init" description="compile the source ">
+		<javac includeantruntime="false"  
+			srcdir="${src.dir}" 
+			destdir="${build.dir}" 
+			debug="on">
+			
+			<classpath refid="junit.classpath"/>
+		</javac>	
+	</target>
+	
+	<!-- Classes to test -->
+	<target name="testAll" depends="compile">
+		<junit printsummary="yes" fork="yes">
+			<test name="edu.project.test.RoomTest"/>
+			
+			<classpath location="${build.dir}"/>	
+			<classpath refid="junit.classpath"/>
+			
+			<formatter type="plain"/>
+		</junit>
+	</target>
+
+</project>
