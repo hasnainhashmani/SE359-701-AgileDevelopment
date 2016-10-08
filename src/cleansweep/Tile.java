@@ -31,17 +31,9 @@ public class Tile {
 		dirtLevel--;
 	}
 	
-	public int getCarpetType(){
-		return carpet;
-	}
-	
-	public boolean hasDirt(){
-		return dirtLevel>0;
-	}
-	
-	public int getObstacleType(){
-		return obstacleType;
-	}
+	public int getCarpetType(){return carpet;}
+	public boolean hasDirt(){return dirtLevel>0;}
+	public int getObstacleType(){return obstacleType;}
 	
 	
 }

@@ -26,7 +26,6 @@ public class RoomParser {
 		
 		if (is[1]<0x65) dirt=(int) is[1];
 		else dirt=0;
-		System.out.println("CARPET:"+carpet);
 		return new Tile(carpet, obstacle, dirt);
 	}
 	
@@ -41,11 +40,8 @@ public class RoomParser {
 	public static Room parseFile(String filename) throws IOException {
 		try{
 			FileInputStream f = new FileInputStream(filename);
-			f.skip(2);
-			byte[] buffer = new byte[4];
-			f.read(buffer);
-			int fsize = byteLEtoInt(buffer);
-			f.skip(12);			
+			f.skip(18);
+			byte[] buffer = new byte[4];		
 			f.read(buffer);
 			int xSize = byteLEtoInt(buffer);
 			f.read(buffer);
@@ -65,21 +61,15 @@ public class RoomParser {
 						if (pixel[i]<0){
 							pixel[i]+=256;
 						}
-						System.out.print(pixel[i]+" ");
 					}
-					System.out.print("("+(y)+","+x+")");
 					
-					if (y%2==0 && (x)%2==1){
-						System.out.print("Wall H");
+					if (y%2==0 && (x)%2==1){ //horiz wall
 						r.addWall(x/2, y/2, Room.DIR_N, intsToWall(pixel));
-					} else if (y%2==1 && (x)%2==1){
-						System.out.print("Tile" + ((y/2*(xSize-1)/2)+x/2));
+					} else if (y%2==1 && (x)%2==1){ //tile
 						tilequeue[((y/2*(xSize-1)/2)+x/2)]=intsToTile(pixel);
-					} else if (y%2==1){
-						System.out.print("Wall V");
+					} else if (y%2==1){ //vert wall
 						r.addWall(x/2, y/2, Room.DIR_W, intsToWall(pixel));
 					}
-					System.out.println();
 				}
 				f.skip(4-((xSize*3)%4));
 			}
@@ -87,7 +77,6 @@ public class RoomParser {
 			for(Tile t:tilequeue){
 				r.addTile(t);
 			}
-			
 			f.close();
 			return r;
 		} catch(IOException e){

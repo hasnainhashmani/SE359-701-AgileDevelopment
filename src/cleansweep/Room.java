@@ -64,12 +64,10 @@ public class Room {
 			List<Tile> row = floor.get(y);
 			for(int x=0; x<row.size(); x++){
 				if (walls.get(y*2).get(x)>0){
-					s+="_";
-					s+="_"; //TODO doors
+					s+="__"; //TODO doors
 				}
 				else{
-					s+=" ";
-					s+=" ";
+					s+="  ";
 				}
 			}
 			s+="\n";
@@ -90,17 +88,13 @@ public class Room {
 		}
 		for(int x=0; x<w; x++){
 			if (walls.get(h*2).get(x)>0){
-				s+="_"; //TODO doors
-				s+="_";
+				s+="__"; //TODO doors
 			}
-			else{
-				s+=" ";
-				s+=" ";
-			}
+			else{s+="  ";}
 		}
 		return s;
 	}
-	//TODO: add floor and walls (set up room), add objects
+	//TODO: add objects
 	
 	public boolean[] obstacleBlocking(int x, int y){
 		//TODO
@@ -113,14 +107,14 @@ public class Room {
 		return floor.get(y).get(x).hasDirt();
 	}
 	
-	public int getFloorTypeAt(int x, int y){
-		//TODO error handle
-		return floor.get(y).get(x).getCarpetType();
-	}
-	
 	public void clean(int x, int y){
 		//TODO error handle
 		floor.get(y).get(x).cleanTile();
+	}
+	
+	public int getFloorTypeAt(int x, int y){
+		//TODO error handle
+		return floor.get(y).get(x).getCarpetType();
 	}
 	
 	public int getWidth(){return w;}
