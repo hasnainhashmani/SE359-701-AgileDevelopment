@@ -2,13 +2,13 @@ package cleansweep;
 
 public class Tile {
 	//handles carpet type, dirt level, and obstacle on the floor.
-	public final int CARPET_BARE = 0;
-	public final int CARPET_LOW = 1;
-	public final int CARPET_HIGH = 2;
+	public static final int CARPET_BARE = 0;
+	public static final int CARPET_LOW = 1;
+	public static final int CARPET_HIGH = 2;
 	
-	public final int OBSTACLE_NONE = 0;
-	public final int OBSTACLE_BLOCK = 1;
-	public final int OBSTACLE_STAIRS = 2;
+	public static final int OBSTACLE_NONE = 0;
+	public static final int OBSTACLE_BLOCK = 1;
+	public static final int OBSTACLE_STAIRS = 2;
 	
 	private int carpet;
 	private int dirtLevel;
