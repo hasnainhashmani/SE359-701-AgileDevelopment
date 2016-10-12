@@ -1,4 +1,4 @@
-package Robet;
+package Robot;
 
 import java.awt.Point;
 import java.util.ArrayList;
