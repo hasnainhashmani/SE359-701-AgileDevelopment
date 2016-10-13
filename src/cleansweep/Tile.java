@@ -13,18 +13,23 @@ public class Tile {
 	private int carpet;
 	private int dirtLevel;
 	private int obstacleType;
+	private boolean placeholder;
 	
 	public Tile(){
-		this.carpet=0;
-		this.dirtLevel=0;
-		this.obstacleType=0;
+		this.carpet=-1;
+		this.dirtLevel=-1;
+		this.obstacleType=-1;
+		this.placeholder=true;
 	}
 	
 	public Tile(int carpetType, int dirt, int obstacle){
 		this.carpet=carpetType;
 		this.dirtLevel=dirt;
 		this.obstacleType=obstacle;
+		this.placeholder=false;
 	}
+	
+	public boolean isPlaceholder(){return placeholder;}
 	
 	public void cleanTile(){
 		//if (dirtLevel<=0) throw new Exception(); //TODO exception type
