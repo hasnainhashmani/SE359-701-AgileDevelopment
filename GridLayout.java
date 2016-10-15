@@ -33,7 +33,7 @@
 			// TODO Auto-generated method stub
 			Random o = new Random();
 			
-			grid_layout = new grid_layout(dimension);
+			grid_layout = new GridMap(dimension);
 			
 			//Anchor Pane 
 			root = new AnchorPane();
@@ -41,7 +41,7 @@
 			
 			//Loading and placing our robot-zombie
 			robot = new Robot(robot);
-			loadRImage();
+			loadRobotImage();
 			
 			//Button for resetting the gridpaine
 			Button btn = new Button();
@@ -63,7 +63,7 @@
 					drawGrid();
 					
 					robot = new Robot(robot);
-					loadRImage();
+					loadRobotImage();
 					
 				}
 				
@@ -123,7 +123,7 @@
 
 		//Draws the grid
 
-		private void drawGrid() {
+		private void drawGrid() { //
 			// TODO Auto-generated method stub
 			boolean[][] grid = GridLayout.getMap();
 			for(int x=0; x<dimension; x++){
