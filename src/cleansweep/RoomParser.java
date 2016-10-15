@@ -1,6 +1,7 @@
 package cleansweep;
 
 import java.io.*;
+import java.awt.Point;
 
 public class RoomParser {
 	//TODO turn into interface? factory?
@@ -68,11 +69,11 @@ public class RoomParser {
 					}
 					
 					if (y%2==0 && (x)%2==1){ //horiz wall
-						r.addWall(x/2, y/2, Room.DIR_N, intsToWall(pixel));
+						r.addWall(new Point(x/2, y/2), Room.DIR_N, intsToWall(pixel));
 					} else if (y%2==1 && (x)%2==1){ //tile
 						tilequeue[((y/2*(xSize-1)/2)+x/2)]=intsToTile(pixel);
 					} else if (y%2==1){ //vert wall
-						r.addWall(x/2, y/2, Room.DIR_W, intsToWall(pixel));
+						r.addWall(new Point(x/2, y/2), Room.DIR_W, intsToWall(pixel));
 					}
 				}
 				f.skip(4-((xSize*3)%4));

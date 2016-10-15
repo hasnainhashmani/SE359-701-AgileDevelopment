@@ -2,6 +2,7 @@ package cleansweep;
 
 import java.util.List;
 import java.util.ArrayList;
+import java.awt.Point;
 
 public class Room {
 	
@@ -42,19 +43,20 @@ public class Room {
 		}
 	}
 	
-	public void addTile(int x, int y, Tile t) throws Exception{
-		//TODO replace x,y with Point?
-		List<Tile> row = floor.get(y);
-		while (row.size() < x+1){
+	public void addTile(Point p, Tile t){
+		int tempX = p.x; 
+		int tempY = p.y;
+		List<Tile> row = floor.get(tempY);
+		while (row.size() < tempX+1){
 			row.add(new Tile());
 		}
-		if (row.get(x).isPlaceholder()){
-			row.remove(x);
-			row.add(x, t);
+		if (row.get(tempX).isPlaceholder()){
+			row.remove(tempX);
+			row.add(tempX, t);
 		} else {
-			System.out.println(row.get(x).isPlaceholder());
+			System.out.println(row.get(tempX).isPlaceholder());
 			System.out.println(floor);
-			throw new Exception("Tile already on floor");
+			throw new RuntimeException("Tile already on floor");
 		}
 	}
 	
@@ -68,16 +70,17 @@ public class Room {
 		}
 	}
 	
-	public void addWall(int x, int y, int direction, int wType){
-		//TODO replace x,y with Point?
+	public void addWall(Point p, int direction, int wType){
+		int tempX=p.x;
+		int tempY=p.y;
 		if (direction==DIR_N){
-			walls.get(y*2).add(x,wType);
+			walls.get(tempY*2).add(tempX,wType);
 		} else if (direction==DIR_S) {
-			walls.get((y*2)+2).add(x,wType);
+			walls.get((tempY*2)+2).add(tempX,wType);
 		} else if (direction==DIR_W){
-			walls.get((y*2)+1).add(x,wType);
+			walls.get((tempY*2)+1).add(tempX,wType);
 		} else{
-			walls.get((y*2)+1).add(x+1,wType);
+			walls.get((tempY*2)+1).add(tempX+1,wType);
 		}
 	}
 	
@@ -121,35 +124,33 @@ public class Room {
 	}
 	//TODO: add objects
 	
-	public int[] wallsSurrounding(int x, int y){
-		/* Returns the wall types surrounding the tile at x,y
+	public int[] wallsSurrounding(Point p){
+		/* Returns the wall types surrounding the tile at p
 		 * ORDER: N,W,E,S
 		 * See constants (WALL_NONE, WALL_WALL, etc)
 		 */
-		//TODO
-		int[] sides = {walls.get(y*2).get(x),
-					   walls.get((y*2)+1).get(x),
-					   walls.get((y*2)+1).get(x+1),
-					   walls.get((y*2)+2).get(x)};
+		int tX = p.x;
+		int tY = p.y;
+		int[] sides = {walls.get(tY*2).get(tX),
+					   walls.get((tY*2)+1).get(tX),
+					   walls.get((tY*2)+1).get(tX+1),
+					   walls.get((tY*2)+2).get(tX)};
 		return sides; //all four directions
 	}
 	
-	public boolean hasDirtAt(int x, int y){
+	public boolean hasDirtAt(Point p){
 		//TODO error handle
-		//TODO x,y replace with Point?
-		return floor.get(y).get(x).hasDirt();
+		return floor.get(p.y).get(p.x).hasDirt();
 	}
 	
-	public void clean(int x, int y){
+	public void clean(Point p){
 		//TODO error handle
-		//TODO x,y replace with Point?
-		floor.get(y).get(x).cleanTile();
+		floor.get(p.y).get(p.x).cleanTile();
 	}
 	
-	public int getFloorTypeAt(int x, int y){
+	public int getFloorTypeAt(Point p){
 		//TODO error handle
-		//TODO x,y replace with Point?
-		return floor.get(y).get(x).getCarpetType();
+		return floor.get(p.y).get(p.x).getCarpetType();
 	}
 	
 	public int getWidth(){return w;}
