@@ -13,7 +13,7 @@ public class GridMap {
 	public GridMap(int dimension, int objectCount){
 		this.dimension = dimension;
 		this.objectCount = objectCount;
-		placeobjects(); //Placing objects before anything else. So as to keep from placing ships on objects.
+		placeobjects(); //Placing objects before anything else. So as to keep from placing robot on objects.
 		currentPosition = placeRobot(); //Placing our robot
 	}
 	
