@@ -23,6 +23,14 @@ public class RobotDummy {
 		//This should happen whenever someone in the GUI requests it 
 		//(e.g. press spacebar, click a button that says next, or once a second if we 'play' the simulation)
 		//eventually we can undo this and stuff
+		if (toExplore.hasDirtAt(pos)){
+			toExplore.clean(pos);
+			if(!toExplore.hasDirtAt(pos)){
+				known.clean(pos);
+			}
+			return;
+		}
+	
 		gatherData();
 		Point p = getObjective();
 		Point next = getPath(pos,p).get(0);
