@@ -137,6 +137,7 @@ public class GridLayout extends Application{
 		for(int x=0; x<room.getWidth(); x++){
 			for(int y=0; y<room.getHeight(); y++){
 				p=new Point(x,y);
+
 				Rectangle rect = new Rectangle(x*scale, y*scale, scale, scale);
 
 				//room stuff goes here
@@ -215,6 +216,21 @@ public class GridLayout extends Application{
 				if (room.hasDirtAt(p)){
 					Circle dirt = new Circle(x*scale+(scale/5),y*scale+(scale/5),scale/6,Color.BROWN);
 					root.getChildren().add(dirt);
+				}
+				
+				if(p.equals(robot.getObjective())){
+					Circle target = new Circle((x+1)*scale-(scale/5),y*scale+(scale/5),scale/6,Color.BLUE);
+					root.getChildren().add(target);
+				}
+				
+				Line pathLine;
+				Point tempPrevStep = robot.getPosition();
+				for(Point pathStep: robot.getPath(robot.getPosition(),robot.getObjective())){
+					pathLine = new Line(tempPrevStep.x*scale+(scale/2),tempPrevStep.y*scale+(scale/2),pathStep.x*scale+(scale/2),pathStep.y*scale+(scale/2));
+					pathLine.setStroke(Color.CADETBLUE);
+					pathLine.setStrokeWidth(3);
+					tempPrevStep = pathStep;
+					root.getChildren().add(pathLine);
 				}
 
 			}
