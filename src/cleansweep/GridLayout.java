@@ -78,7 +78,7 @@ public class GridLayout extends Application{
 	
 	private void loadrobotImage() { //Placing the robot Image
 		// TODO Auto-generated method stub
-		Image robotImage = new Image("File:robotImg.jpg", scale, scale, true, true);
+		Image robotImage = new Image("File:robotImg.png", scale, scale, true, true);
 		robotImg = new ImageView(robotImage);
 		robotImg.setX(robot.getPosition().x*scale);
 		robotImg.setY(robot.getPosition().y*scale);
