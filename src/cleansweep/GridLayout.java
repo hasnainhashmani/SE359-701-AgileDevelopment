@@ -1,4 +1,4 @@
-package ds;
+package cleansweep;
 
 import java.awt.Point;
 import java.util.Random;
@@ -19,13 +19,12 @@ import javafx.stage.Stage;
 
 public class GridLayout extends Application{
 	int dimension=25; 
-	int objectCount=5;
 	int scale = 25;
 	ImageView robotImg;
-	GridMap GridMap;
 	Pane root;
 	Scene scene;
-	Robot robot;
+	Room r;
+	RobotDummy robot;
 	
 	public static void main(String[] args){
 		launch(args);
@@ -35,22 +34,19 @@ public class GridLayout extends Application{
 	public void start(Stage gridStage) throws Exception {
 		// TODO Auto-generated method stub
 		//Random number generator for objects
-		Random o = new Random();
-		objectCount = o.nextInt(10);
-		
-		GridMap = new GridMap(dimension, objectCount);
 		
 		root = new AnchorPane();
 		drawMap();
 		
+		r = RoomParser.parseFile("samplefloor.bmp");
+		robot = new RobotDummy(r);
 		//Loading and placing our robot
-		robot = new Robot(GridMap);
 		loadrobotImage();
 		
 		
 		//Button for resetting the game
 		Button btn = new Button();
-		btn.setText("Reset");
+		btn.setText("Step");
 		btn.setScaleX(1.5);
 		btn.setScaleY(1.5);
 		AnchorPane.setBottomAnchor(btn, 25.0);
@@ -58,18 +54,9 @@ public class GridLayout extends Application{
 		btn.setOnAction(new EventHandler<ActionEvent>(){
 			@Override
 			public void handle(ActionEvent event) {
-				// TODO Auto-generated method stub
-				//RESET EVERYTHING
-				Random o = new Random();
-				objectCount = o.nextInt(10);
-				
-				GridMap = new GridMap(dimension, objectCount);
-
-				drawMap();
-				
-				robot = new Robot(GridMap);
-				loadrobotImage();
-				
+				robot.step();
+				robotImg.setX(robot.getPosition().x*scale); //Moving robot image according to command
+				robotImg.setY(robot.getPosition().y*scale); //
 			}
 			
 		});
@@ -83,16 +70,16 @@ public class GridLayout extends Application{
 	
 	private void loadrobotImage() { //Placing the robot Image
 		// TODO Auto-generated method stub
-		Image robotImage = new Image("File:src\\robotImg.jpg", scale, scale, true, true);
+		Image robotImage = new Image("File:robotImg.jpg", scale, scale, true, true);
 		robotImg = new ImageView(robotImage);
-		robotImg.setX(robot.getLocation().x*scale);
-		robotImg.setY(robot.getLocation().y*scale);
+		robotImg.setX(robot.getPosition().x*scale);
+		robotImg.setY(robot.getPosition().y*scale);
 		root.getChildren().add(robotImg);
 	}
 	
 	private void loadObjectImage(int x, int y) { //Placing the object Image on the coordinates x and y
 		// TODO Auto-generated method stub
-		Image objectImage = new Image("File:src\\objectImg.jpg", scale, scale, true, true);
+		Image objectImage = new Image("File:objectImg.jpg", scale, scale, true, true);
 		ImageView objectImg = new ImageView(objectImage);
 		objectImg.setX(x*scale);
 		objectImg.setY(y*scale);
@@ -107,24 +94,29 @@ public class GridLayout extends Application{
 			@Override
 			public void handle(KeyEvent event) {
 				// TODO Auto-generated method stub
+				Point oldP = robot.getPosition();
 				switch(event.getCode()){
+				
 				case RIGHT:
-					robot.goEast();
+					robot.forceMove(new Point(oldP.x+1,oldP.y));
 					break;
 				case LEFT:
-					robot.goWest();
+					robot.forceMove(new Point(oldP.x-1,oldP.y));
 					break;
 				case DOWN:
-					robot.goSouth();
+					robot.forceMove(new Point(oldP.x,oldP.y+1));
 					break;
 				case UP:
-					robot.goNorth();
+					robot.forceMove(new Point(oldP.x,oldP.y-1));
+					break;
+				case S:
+					robot.step();
 					break;
 				default:
 					break;
 				}
-				robotImg.setX(robot.getLocation().x*scale); //Moving robot image according to command
-				robotImg.setY(robot.getLocation().y*scale); //
+				robotImg.setX(robot.getPosition().x*scale); //Moving robot image according to command
+				robotImg.setY(robot.getPosition().y*scale); //
 			}
 		});
 	}
@@ -132,15 +124,12 @@ public class GridLayout extends Application{
 
 	private void drawMap() { //creating the map and objects.
 		// TODO Auto-generated method stu
-		boolean[][] grid = GridMap.getMap();
 		for(int x=0; x<dimension; x++){
 			for(int y=0; y<dimension; y++){
 				Rectangle rect = new Rectangle(x*scale, y*scale, scale, scale);
 				rect.setStroke(Color.BLACK);
-				if(grid[y][x]==true) {loadObjectImage(x,y); //object Placements
-					continue;
-				}
-				else rect.setFill(Color.TURQUOISE); //Map Color
+				//room stuff goes here
+				rect.setFill(Color.TURQUOISE); //Map Color
 				root.getChildren().add(rect);
 			}
 		}
