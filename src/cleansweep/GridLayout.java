@@ -1,6 +1,7 @@
 package cleansweep;
 
 import java.awt.Point;
+import java.util.ArrayList;
 import java.util.Random;
 
 import javafx.application.Application;
@@ -15,16 +16,18 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.Line;
 import javafx.stage.Stage;
 
-public class GridLayout extends Application{
-	int dimension=25; 
-	int scale = 25;
+public class GridLayout extends Application{ 
+	int scale = 40;
+	String filename = "samplefloor.bmp"; //TODO make this command line option or something
 	ImageView robotImg;
 	Pane root;
 	Scene scene;
-	Room r;
+	Room room;
 	RobotDummy robot;
+
 	
 	public static void main(String[] args){
 		launch(args);
@@ -36,10 +39,12 @@ public class GridLayout extends Application{
 		//Random number generator for objects
 		
 		root = new AnchorPane();
-		drawMap();
 		
-		r = RoomParser.parseFile("samplefloor.bmp");
-		robot = new RobotDummy(r);
+		
+		room = RoomParser.parseFile(filename);
+		
+		drawMap();
+		robot = new RobotDummy(room);
 		//Loading and placing our robot
 		loadrobotImage();
 		
@@ -98,16 +103,16 @@ public class GridLayout extends Application{
 				switch(event.getCode()){
 				
 				case RIGHT:
-					robot.forceMove(new Point(oldP.x+1,oldP.y));
+					if (robot.getPosition().x<room.getWidth()-1) robot.forceMove(new Point(oldP.x+1,oldP.y));
 					break;
 				case LEFT:
-					robot.forceMove(new Point(oldP.x-1,oldP.y));
+					if (robot.getPosition().x>0) robot.forceMove(new Point(oldP.x-1,oldP.y));
 					break;
 				case DOWN:
-					robot.forceMove(new Point(oldP.x,oldP.y+1));
+					if (robot.getPosition().y<room.getHeight()-1) robot.forceMove(new Point(oldP.x,oldP.y+1));
 					break;
 				case UP:
-					robot.forceMove(new Point(oldP.x,oldP.y-1));
+					if (robot.getPosition().y>0) robot.forceMove(new Point(oldP.x,oldP.y-1));
 					break;
 				case S:
 					robot.step();
@@ -121,16 +126,74 @@ public class GridLayout extends Application{
 		});
 	}
 	
+	private Color[] colors= {Color.BLACK,Color.rgb(255,255,176),Color.rgb(255,150,0),Color.rgb(230,100,50)};
+	private Color[] colorsSeen = {Color.BLACK,Color.rgb(221,221,20),Color.rgb(255,150,0),Color.rgb(230,100,50)};
+	private Color[] colorWalls = {Color.BLACK,Color.rgb(255,0,0),Color.rgb(0,255,0)};
 
 	private void drawMap() { //creating the map and objects.
-		// TODO Auto-generated method stu
-		for(int x=0; x<dimension; x++){
-			for(int y=0; y<dimension; y++){
+		// TODO Auto-generated method stub
+		Point p;
+		for(int x=0; x<room.getWidth(); x++){
+			for(int y=0; y<room.getHeight(); y++){
+				p=new Point(x,y);
 				Rectangle rect = new Rectangle(x*scale, y*scale, scale, scale);
-				rect.setStroke(Color.BLACK);
+
 				//room stuff goes here
-				rect.setFill(Color.TURQUOISE); //Map Color
+				if(room.floorIsObstacle(p)>0){ //TODO stairs are different than obstacle
+					rect.setFill(colors[0]);
+					rect.setStroke(Color.rgb(50,50,50));
+				} else {
+					rect.setFill(colors[room.getFloorTypeAt(p)+1]); //floor tiles
+					rect.setStroke(colors[room.getFloorTypeAt(p)+1].deriveColor(1.0, 1.0, 0.7, 1.0));
+				}
+				
+				ArrayList<Line> wallLines = new ArrayList<Line>();
+				int wall;
+				int[] walls = room.wallsSurrounding(p);
+				for(int w =0;w<4;w++){
+					wall = walls[w];
+					if (! (wall==Room.WALL_NONE)){
+						//n=0, w=1,e=2,s=3
+						Line l = new Line();
+						l.setStroke(colorWalls[wall-1]);
+						l.setStrokeWidth(4);
+						
+						switch (w){ 
+						case 0:
+							l.setStartX(x*scale);
+							l.setEndX(x*scale+scale);
+							l.setStartY(y*scale);
+							l.setEndY(y*scale);
+							break;
+						case 1:
+							l.setStartX(x*scale);
+							l.setEndX(x*scale);
+							l.setStartY(y*scale);
+							l.setEndY(y*scale+scale);
+							break;
+						case 2:
+							l.setStartX(x*scale+scale);
+							l.setEndX(x*scale+scale);
+							l.setStartY(y*scale);
+							l.setEndY(y*scale+scale);
+							break;
+						case 3:
+							l.setStartX(x*scale);
+							l.setEndX(x*scale+scale);
+							l.setStartY(y*scale+scale);
+							l.setEndY(y*scale+scale);
+							break;
+								
+						}
+						wallLines.add(l);
+					}}
+
+				
 				root.getChildren().add(rect);
+				
+				for(Line l : wallLines){
+					root.getChildren().add(l);
+				}
 			}
 		}
 	}

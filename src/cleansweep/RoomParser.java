@@ -28,7 +28,7 @@ public class RoomParser {
 		if (is[1]<0x65) dirt=(int) is[1];
 		else dirt=0;
 		
-		return new Tile(carpet, obstacle, dirt);
+		return new Tile(carpet, dirt, obstacle);
 	}
 	
 	private static int intsToWall(int[] is){

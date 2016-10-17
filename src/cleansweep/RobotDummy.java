@@ -57,11 +57,12 @@ public class RobotDummy {
 			wall = surrounded[w];
 			if (wall==Room.WALL_NONE || wall==Room.WALL_DOOROPEN){
 				//n=0, w=1,e=2,s=3
-				switch (w){
-				case 0: visible.add(new Point(pos.x,pos.y-1));
-				case 1: visible.add(new Point(pos.x-1,pos.y));
-				case 2: visible.add(new Point(pos.x+1,pos.y));
-				case 3: visible.add(new Point(pos.x,pos.y+1));
+				
+				switch (w){ //TODO clean this up. Basically it checks if we're in the bounds
+				case 0: visible.add(new Point(Math.min(Math.max(0,pos.x),toExplore.getWidth()-1),Math.min(Math.max(0,pos.y-1),toExplore.getHeight()-1)));
+				case 1: visible.add(new Point(Math.min(Math.max(0,pos.x-1),toExplore.getWidth()-1),Math.min(Math.max(0,pos.y),toExplore.getHeight()-1)));
+				case 2: visible.add(new Point(Math.min(Math.max(0,pos.x+1),toExplore.getWidth()-1),Math.min(Math.max(0,pos.y),toExplore.getHeight()-1)));;
+				case 3: visible.add(new Point(Math.min(Math.max(0,pos.x),toExplore.getWidth()-1),Math.min(Math.max(0,pos.y+1),toExplore.getHeight()-1)));
 				}
 			}
 			known.addWall(pos, w, wall);
@@ -92,5 +93,6 @@ public class RobotDummy {
 	}
 	
 	public Point getPosition(){return new Point(pos.x,pos.y);}
+
 	
 }
