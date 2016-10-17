@@ -34,7 +34,7 @@ public class Room {
 
 			walls.add(new ArrayList<Integer>());
 			walls.add(new ArrayList<Integer>());
-			for (int x = 0; x<width+1; x++){
+			for (int x = 0; x<width; x++){
 				floor.get(y).add(new Tile());
 				walls.get(y*2).add(0);
 				walls.get(y*2+1).add(0);
@@ -130,7 +130,7 @@ public class Room {
 				}
 				s += row.get(x).getCarpetType()+1;
 			}
-			if (walls.get((y*2)+1).get(row.size()-1)>0){
+			if (walls.get((y*2)+1).get(row.size())>0){
 				s+="|"; //TODO doors
 			} else{
 				s+=".";
