@@ -17,7 +17,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 
-public class GridLayout extends Application{
+public class gridlayout extends Application{
 	int dimension=25; 
 	int objectCount=5;
 	int scale = 25;
@@ -83,7 +83,7 @@ public class GridLayout extends Application{
 	
 	private void loadrobotImage() { //Placing the robot Image
 		// TODO Auto-generated method stub
-		Image robotImage = new Image("File:src\\robot.png", scale, scale, true, true);
+		Image robotImage = new Image("File:src\\robotImg.jpg", scale, scale, true, true);
 		robotImg = new ImageView(robotImage);
 		robotImg.setX(robot.getLocation().x*scale);
 		robotImg.setY(robot.getLocation().y*scale);
@@ -92,7 +92,7 @@ public class GridLayout extends Application{
 	
 	private void loadObjectImage(int x, int y) { //Placing the object Image on the coordinates x and y
 		// TODO Auto-generated method stub
-		Image objectImage = new Image("File:src\\object.jpg", scale, scale, true, true);
+		Image objectImage = new Image("File:src\\objectImg.jpg", scale, scale, true, true);
 		ImageView objectImg = new ImageView(objectImage);
 		objectImg.setX(x*scale);
 		objectImg.setY(y*scale);
