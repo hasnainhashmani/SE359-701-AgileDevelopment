@@ -44,11 +44,11 @@ public class GridLayout extends Application{
 		
 		room = RoomParser.parseFile(filename);
 		
-		drawMap();
+		//drawMap();
 		robot = new RobotDummy(room);
 		//Loading and placing our robot
-		loadrobotImage();
 		
+		drawMap();
 		
 		//Button for resetting the game
 		Button btn = new Button();
@@ -61,10 +61,9 @@ public class GridLayout extends Application{
 			@Override
 			public void handle(ActionEvent event) {
 				robot.step();
-				drawMap();
 				robotImg.setX(robot.getPosition().x*scale); //Moving robot image according to command
 				robotImg.setY(robot.getPosition().y*scale); //
-				loadrobotImage();
+				drawMap();
 			}
 			
 		});
@@ -124,12 +123,12 @@ public class GridLayout extends Application{
 				}
 				robotImg.setX(robot.getPosition().x*scale); //Moving robot image according to command
 				robotImg.setY(robot.getPosition().y*scale); //
+				drawMap();
 			}
 		});
 	}
 	
-	private Color[] colors= {Color.BLACK,Color.rgb(255,255,176),Color.rgb(255,150,0),Color.rgb(230,100,50)};
-	private Color[] colorsSeen = {Color.BLACK,Color.rgb(221,221,20),Color.rgb(255,150,0),Color.rgb(230,100,50)};
+	private Color[] colors= 	 {Color.BLACK,Color.rgb(255,255,176),Color.rgb(255,150,0),Color.rgb(230,100,50)};
 	private Color[] colorWalls = {Color.BLACK,Color.rgb(255,0,0),Color.rgb(0,255,0)};
 
 	private void drawMap() { //creating the map and objects.
@@ -145,20 +144,33 @@ public class GridLayout extends Application{
 					rect.setFill(colors[0]);
 					rect.setStroke(Color.rgb(50,50,50));
 				} else {
-					rect.setFill(colors[room.getFloorTypeAt(p)+1]); //floor tiles
-					rect.setStroke(colors[room.getFloorTypeAt(p)+1].deriveColor(1.0, 1.0, 0.7, 1.0));
+					if(robot.known.floorIsPlaceholder(p)){
+						rect.setFill(colors[room.getFloorTypeAt(p)+1]); //floor tiles
+						rect.setStroke(colors[room.getFloorTypeAt(p)+1].deriveColor(1.0, 1.0, 0.7, 1.0));
+					}
+					else{
+					rect.setFill(colors[room.getFloorTypeAt(p)+1].deriveColor(60.0, 1.0, 1.0, 1.0)); //floor tiles
+					rect.setStroke(colors[room.getFloorTypeAt(p)+1].deriveColor(60.0, 1.0, 0.7, 1.0));
+					}
 				}
 				
 				
 				ArrayList<Line> wallLines = new ArrayList<Line>();
 				int wall;
 				int[] walls = room.wallsSurrounding(p);
+				int[] wallsSeen = robot.known.wallsSurrounding(p);
+				boolean wallSeen;
 				for(int w =0;w<4;w++){
 					wall = walls[w];
+					wallSeen=walls[w]==wallsSeen[w];
 					if (! (wall==Room.WALL_NONE)){
 						//n=0, w=1,e=2,s=3
 						Line l = new Line();
-						l.setStroke(colorWalls[wall-1]);
+						if (wallSeen){
+							l.setStroke(colorWalls[wall-1].deriveColor(40.0, 1.0, 10.0, 1.0));
+						}else{
+							l.setStroke(colorWalls[wall-1]);
+						}
 						l.setStrokeWidth(4);
 						
 						switch (w){ 
@@ -205,6 +217,7 @@ public class GridLayout extends Application{
 
 			}
 		}
+		loadrobotImage();
 	}
 	
 	

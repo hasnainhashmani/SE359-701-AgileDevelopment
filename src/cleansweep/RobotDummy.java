@@ -6,7 +6,7 @@ import java.util.List;
 
 public class RobotDummy {
 	
-	private Room known;
+	public Room known; //TODO methods to access this?
 	private Room toExplore;
 	
 	private Point pos;
