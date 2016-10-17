@@ -21,9 +21,12 @@ public class Room {
 	private int w;
 	private int h;
 	
+	private Point startingPos;
+	
 	public Room(int width, int height){
 		this.w=width;
 		this.h=height;
+		this.startingPos=new Point(0,0);
 		floor = new ArrayList<List<Tile>>();
 		walls = new ArrayList<List<Integer>>();
 		for (int y = 0; y<height; y++){
@@ -56,7 +59,7 @@ public class Room {
 		} else {
 			System.out.println(row.get(tempX).isPlaceholder());
 			System.out.println(floor);
-			throw new RuntimeException("Tile already on floor");
+			throw new RuntimeException("Tile already on floor " + p.x + " " + p.y);
 		}
 	}
 	
@@ -68,6 +71,16 @@ public class Room {
 				return;
 			}
 		}
+	}
+	
+	public Point getStartingPosition(){
+		/*returns the starting position of the robot*/
+		return startingPos;
+	}
+	
+	public void setStartingPos(Point p){
+		//TODO error handle
+		startingPos = p;
 	}
 	
 	public void addWall(Point p, int direction, int wType){
@@ -90,13 +103,23 @@ public class Room {
 		String s = "";
 		for(int y = 0; y<floor.size(); y++){
 			List<Tile> row = floor.get(y);
+
 			for(int x=0; x<row.size(); x++){
-				if (walls.get(y*2).get(x)>0){
+				if (new Point(x,y).equals(this.getStartingPosition())){
+					s+="P";
+					if (walls.get(y*2).get(x)>0){
+						s+="_"; //TODO doors
+					}
+					else{
+						s+=".";
+					}
+				}
+				else{if (walls.get(y*2).get(x)>0){
 					s+=" _"; //TODO doors
 				}
 				else{
 					s+=" .";
-				}
+				}}
 			}
 			s+="\n";
 			for(int x=0; x<row.size(); x++){
@@ -105,7 +128,7 @@ public class Room {
 				} else{
 					s+=".";
 				}
-				s += row.get(x).getCarpetType();
+				s += row.get(x).getCarpetType()+1;
 			}
 			if (walls.get((y*2)+1).get(row.size()-1)>0){
 				s+="|"; //TODO doors

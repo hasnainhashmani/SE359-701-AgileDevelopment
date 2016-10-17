@@ -27,6 +27,7 @@ public class RoomParser {
 		
 		if (is[1]<0x65) dirt=(int) is[1];
 		else dirt=0;
+		
 		return new Tile(carpet, obstacle, dirt);
 	}
 	
@@ -54,7 +55,6 @@ public class RoomParser {
 			f.skip(offset-26);
 			
 			Room r = new Room((xSize-1)/2,(ySize-1)/2);
-			Tile[] tilequeue = new Tile[((xSize-1)/2)*((ySize-1)/2)];
 			
 			buffer = new byte[3];
 			int[] pixel = new int[3];
@@ -71,16 +71,17 @@ public class RoomParser {
 					if (y%2==0 && (x)%2==1){ //horiz wall
 						r.addWall(new Point(x/2, y/2), Room.DIR_N, intsToWall(pixel));
 					} else if (y%2==1 && (x)%2==1){ //tile
-						tilequeue[((y/2*(xSize-1)/2)+x/2)]=intsToTile(pixel);
+						r.addTile(new Point(x/2,y/2),intsToTile(pixel));
+						
+						if (pixel[2]==1){
+							System.out.println(pixel[2]);
+							r.setStartingPos(new Point(x/2,y/2));
+						}
 					} else if (y%2==1){ //vert wall
 						r.addWall(new Point(x/2, y/2), Room.DIR_W, intsToWall(pixel));
 					}
 				}
 				f.skip(4-((xSize*3)%4));
-			}
-
-			for(Tile t:tilequeue){
-				r.addTile(t);
 			}
 			f.close();
 			return r;
