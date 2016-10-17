@@ -17,7 +17,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 
-public class gridlayout extends Application{
+public class GridLayout extends Application{
 	int dimension=25; 
 	int objectCount=5;
 	int scale = 25;
