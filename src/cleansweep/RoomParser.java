@@ -40,6 +40,7 @@ public class RoomParser {
 	}
 	
 	public static Room parseFile(String filename) throws IOException {
+		//takes in a filename in my format, spits out a room object. 
 		try{
 			FileInputStream f = new FileInputStream(filename);
 			f.skip(10);
@@ -72,9 +73,8 @@ public class RoomParser {
 						r.addWall(new Point(x/2, y/2), Room.DIR_N, intsToWall(pixel));
 					} else if (y%2==1 && (x)%2==1){ //tile
 						r.addTile(new Point(x/2,y/2),intsToTile(pixel));
-						
 						if (pixel[2]==1){
-							System.out.println(pixel[2]);
+							//System.out.println(pixel[2]);
 							r.setStartingPos(new Point(x/2,y/2));
 						}
 					} else if (y%2==1){ //vert wall

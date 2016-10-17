@@ -39,6 +39,8 @@ public class Room {
 				walls.get(y*2).add(0);
 				walls.get(y*2+1).add(0);
 			}
+			walls.get(y*2).add(0);
+			walls.get(y*2+1).add(0);
 		}
 		walls.add(new ArrayList<Integer>());
 		for (int x = 0; x<width+1; x++){
@@ -47,6 +49,7 @@ public class Room {
 	}
 	
 	public void addTile(Point p, Tile t){
+		//todo a bit more error handling?
 		int tempX = p.x; 
 		int tempY = p.y;
 		List<Tile> row = floor.get(tempY);
@@ -62,20 +65,10 @@ public class Room {
 			throw new RuntimeException("Tile already on floor " + p.x + " " + p.y);
 		}
 	}
-	
-	public void addTile(Tile t){
-		/* Convenience method for parser */
-		for(int y=0; y<floor.size(); y++){
-			if (floor.get(y).size()<this.w){
-				floor.get(y).add(t);
-				return;
-			}
-		}
-	}
-	
+
 	public Point getStartingPosition(){
 		/*returns the starting position of the robot*/
-		return startingPos;
+		return startingPos; //TODO fix unsafe
 	}
 	
 	public void setStartingPos(Point p){
@@ -84,6 +77,7 @@ public class Room {
 	}
 	
 	public void addWall(Point p, int direction, int wType){
+		//todo error handle
 		int tempX=p.x;
 		int tempY=p.y;
 		if (direction==DIR_N){
@@ -145,7 +139,6 @@ public class Room {
 		}
 		return s;
 	}
-	//TODO: add objects
 	
 	public int[] wallsSurrounding(Point p){
 		/* Returns the wall types surrounding the tile at p
@@ -174,6 +167,14 @@ public class Room {
 	public int getFloorTypeAt(Point p){
 		//TODO error handle
 		return floor.get(p.y).get(p.x).getCarpetType();
+	}
+	
+	public int floorIsObstacle(Point p){
+		return floor.get(p.y).get(p.x).getObstacleType();
+	}
+	
+	public boolean floorIsPlaceholder(Point p){
+		return floor.get(p.y).get(p.x).isPlaceholder();
 	}
 	
 	public int getWidth(){return w;}
