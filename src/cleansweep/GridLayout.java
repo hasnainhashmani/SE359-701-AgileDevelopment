@@ -17,6 +17,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Line;
+import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
 
 public class GridLayout extends Application{ 
@@ -60,8 +61,10 @@ public class GridLayout extends Application{
 			@Override
 			public void handle(ActionEvent event) {
 				robot.step();
+				drawMap();
 				robotImg.setX(robot.getPosition().x*scale); //Moving robot image according to command
 				robotImg.setY(robot.getPosition().y*scale); //
+				loadrobotImage();
 			}
 			
 		});
@@ -101,7 +104,6 @@ public class GridLayout extends Application{
 				// TODO Auto-generated method stub
 				Point oldP = robot.getPosition();
 				switch(event.getCode()){
-				
 				case RIGHT:
 					if (robot.getPosition().x<room.getWidth()-1) robot.forceMove(new Point(oldP.x+1,oldP.y));
 					break;
@@ -146,6 +148,7 @@ public class GridLayout extends Application{
 					rect.setFill(colors[room.getFloorTypeAt(p)+1]); //floor tiles
 					rect.setStroke(colors[room.getFloorTypeAt(p)+1].deriveColor(1.0, 1.0, 0.7, 1.0));
 				}
+				
 				
 				ArrayList<Line> wallLines = new ArrayList<Line>();
 				int wall;
@@ -194,6 +197,12 @@ public class GridLayout extends Application{
 				for(Line l : wallLines){
 					root.getChildren().add(l);
 				}
+				
+				if (room.hasDirtAt(p)){
+					Circle dirt = new Circle(x*scale+(scale/5),y*scale+(scale/5),scale/6,Color.BROWN);
+					root.getChildren().add(dirt);
+				}
+
 			}
 		}
 	}
