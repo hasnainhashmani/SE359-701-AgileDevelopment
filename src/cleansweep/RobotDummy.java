@@ -8,7 +8,7 @@ import java.util.HashMap;
 
 public class RobotDummy {
 	
-	public Room known; //TODO methods to access this?
+	public Room known; //TODO methods to access this? Right now GUI directly accesses it, possible unsafe
 	private Room toExplore;
 	
 	private Point pos;
@@ -24,8 +24,9 @@ public class RobotDummy {
 		//move one step in the simulation
 		//This should happen whenever someone in the GUI requests it 
 		//(e.g. press spacebar, click a button that says next, or once a second if we 'play' the simulation)
-		//eventually we can undo this and stuff
-		if (toExplore.hasDirtAt(pos)){
+		//TODO save steps
+		
+		if (toExplore.hasDirtAt(pos)){ //clean at the current position instead of moving
 			toExplore.clean(pos);
 			if(!toExplore.hasDirtAt(pos)){
 				known.clean(pos);
@@ -35,17 +36,18 @@ public class RobotDummy {
 			known.clean(pos);
 		}
 	
-		gatherData();
-		Point p = getObjective();
-		if(pos.equals(p)) return;
-		Point next = getPath(pos,p).get(0);
+		gatherData(); //check all the sensors, add room data to stored data
+		Point p = getObjective(); //find the next place to clean (or, the charging station if we're out of fuel/dirt capacity)
+		if(pos.equals(p)) return; //If there's nowhere to go, we're done
+		Point next = getPath(pos,p).get(0); //Plot a path to the next objective
 		pos.x=next.x; //update stored position
 		pos.y=next.y;
-		System.out.print(known);
+		//System.out.print(known); //This is handled by gui
 	}
 	
 	public void forceMove(Point p){
 		//This method allows someone in the GUI to move this robot's position arbitrarily (e.g. with arrow keys)
+		//WARNING: verify that you're not going through walls gui-side. Also this method will be deprecated next iteration.
 		if (known.hasDirtAt(pos) && !toExplore.hasDirtAt(pos)){
 			known.clean(pos);
 		}
@@ -54,7 +56,6 @@ public class RobotDummy {
 	}
 	
 	private void gatherData(){
-		System.out.println("GATHERING");
 		//gather sensor data
 		//detect walls surrounding robot
 		ArrayList<Point> visible = new ArrayList<Point>();
@@ -67,16 +68,16 @@ public class RobotDummy {
 				//n=0, w=1,e=2,s=3
 				
 				switch (w){ //TODO clean this up. Basically it checks if we're in the bounds
-				case 0: 
+				case Room.DIR_N: 
 					visible.add(new Point(Math.min(Math.max(0,pos.x),toExplore.getWidth()-1),Math.min(Math.max(0,pos.y-1),toExplore.getHeight()-1)));
 					break;
-				case 1: 
+				case Room.DIR_W: 
 					visible.add(new Point(Math.min(Math.max(0,pos.x-1),toExplore.getWidth()-1),Math.min(Math.max(0,pos.y),toExplore.getHeight()-1)));
 					break;
-				case 2: 
+				case Room.DIR_E: 
 					visible.add(new Point(Math.min(Math.max(0,pos.x+1),toExplore.getWidth()-1),Math.min(Math.max(0,pos.y),toExplore.getHeight()-1)));;
 					break;
-				case 3: 
+				case Room.DIR_S: 
 					visible.add(new Point(Math.min(Math.max(0,pos.x),toExplore.getWidth()-1),Math.min(Math.max(0,pos.y+1),toExplore.getHeight()-1)));
 					break;
 				}
@@ -86,7 +87,6 @@ public class RobotDummy {
 		//detect obstacles surrounding robot
 		//detect carpet types surrounding robot
 		
-		System.out.println("VIS:"+visible);
 		for(Point p:visible){
 			if (known.floorIsPlaceholder(p)){
 				if (toExplore.floorIsObstacle(p)==0){
@@ -100,22 +100,25 @@ public class RobotDummy {
 	}
 	
 	private static int distance(Point a, Point b){
-		return (Math.abs(b.x-a.x)+Math.abs(b.y-a.y)); //simple distance from A to B
+		//simple distance from A to B
+		return (Math.abs(b.x-a.x)+Math.abs(b.y-a.y)); 
 	}
 	
 	public Point getObjective(){
+		//Returns the best point to travel to. Usually the nearest uncleaned tile
+		//TODO prioritize finishing a room before moving on
 		//If we have to, go to the charging station. Otherwise, find the nearest uncleaned block. 
-		//For now, no charging required (and full dirt capacity)
-		//TODO make this algorithm less naive/greedy (use actual movement cost)
+		//For now, no charging required (and full dirt capacity) TODO
 		int bestDistance=Integer.MAX_VALUE;
-		Point bestTarget=pos; //TODO replace with charging station
+		Point bestTarget=pos; //TODO replace with charging station if necessary
 		int tempDistance;
 		Point tempPoint;
 		for(int y=0;y<toExplore.getHeight();y++){
 			for(int x=0;x<toExplore.getWidth();x++){
 				tempPoint = new Point(x,y);
 				if(known.hasDirtAt(tempPoint)){
-					tempDistance = distance(tempPoint, pos);
+					//tempDistance = distance(tempPoint, pos);
+					tempDistance = getPath(pos,tempPoint).size();
 					if (bestDistance>tempDistance){
 						bestDistance = tempDistance;
 						bestTarget = tempPoint;
@@ -128,7 +131,7 @@ public class RobotDummy {
 	
 	private boolean canMove(Point from,int direction){
 		//checks if the motion from 'from' in 'direction' is obstructed by an obstacle or a wall. 
-		//TODO handle out of bounds
+		//TODO handle out of bounds (normally walls bound the room but if the room file is mildly messed up, handle it)
 		if(known.wallsSurrounding(from)[direction]!=Room.WALL_NONE && known.wallsSurrounding(from)[direction]!=Room.WALL_DOOROPEN){
 			return false;
 		} else{
@@ -148,28 +151,25 @@ public class RobotDummy {
 	}
 	
 	private ArrayList<Point> adjacent(Point p){
-		//System.out.println(p + " " + this.getObjective());
+		//gets the points that can be moved to directly from p
 		ArrayList<Point> adj = new ArrayList<Point>();
 		if(p.x>0 && canMove(p,Room.DIR_W)) adj.add(new Point(p.x-1,p.y));
 		if(p.x<known.getWidth()-1 && canMove(p,Room.DIR_E)) adj.add(new Point(p.x+1,p.y));
 		if(p.y>0 && canMove(p,Room.DIR_N)) adj.add(new Point(p.x,p.y-1));
 		if(p.y<known.getHeight()-1 && canMove(p,Room.DIR_S)) adj.add(new Point(p.x,p.y+1));
-		//System.out.println(adj);
 		return adj;
 	}
 	
 	public List<Point> getPath(Point from, Point to){
-		System.out.println("PATHING:" + from + " to " + to);
+		//pathfinding. returns a list of points, in order, that gets from 'from' to 'to. 
+		//TODO handle fuel and movement costs in travel cost
 		if(from.equals(to)) return new ArrayList<Point>();
-		System.out.println("NOT EQUAL");
 		if(adjacent(from).contains(to)) {
 			ArrayList<Point> ret = new ArrayList<Point>();
 			ret.add(to);
 			return ret;
 		}
-		System.out.println("NOT ADJACENT");
-		//pathfinding TODO
-		//returns a list of points, in order, that will get us from the start to the end
+
 		ArrayList<Point> path = new ArrayList<Point>();
 		
 		ArrayList<Point> checked = new ArrayList<Point>();
@@ -219,7 +219,6 @@ public class RobotDummy {
 		}
 		path.add(temp);
 		Collections.reverse(path);
-		System.out.println(from + " " + to + " " + path + " " + temp);
 		return path;
 	}
 	

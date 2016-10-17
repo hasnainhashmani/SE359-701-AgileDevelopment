@@ -17,6 +17,7 @@ public class RoomParser {
 	}
 	
 	private static Tile intsToTile(int[] is){
+		//from a pixel, return a Tile based on red and green channel
 		int obstacle, carpet, dirt;
 		obstacle=Tile.OBSTACLE_NONE;
 		carpet=Tile.CARPET_BARE;
@@ -73,8 +74,7 @@ public class RoomParser {
 						r.addWall(new Point(x/2, y/2), Room.DIR_N, intsToWall(pixel));
 					} else if (y%2==1 && (x)%2==1){ //tile
 						r.addTile(new Point(x/2,y/2),intsToTile(pixel));
-						if (pixel[2]==1){
-							//System.out.println(pixel[2]);
+						if (pixel[2]==1){ //handle objects (blue channel) here
 							r.setStartingPos(new Point(x/2,y/2));
 						}
 					} else if (y%2==1){ //vert wall

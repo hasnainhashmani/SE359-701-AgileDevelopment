@@ -11,7 +11,7 @@ public class Room {
 	public static final int WALL_DOORCLOSED = 2;
 	public static final int WALL_DOOROPEN = 3;
 	
-	public static final int DIR_N = 0; //TODO make this match the other direction enum
+	public static final int DIR_N = 0; //TODO replace with enum
 	public static final int DIR_W = 1;
 	public static final int DIR_E = 2;
 	public static final int DIR_S = 3;

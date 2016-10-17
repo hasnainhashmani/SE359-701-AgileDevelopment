@@ -23,6 +23,7 @@ import javafx.stage.Stage;
 public class GridLayout extends Application{ 
 	int scale = 40;
 	String filename = "samplefloor.bmp"; //TODO make this command line option or something
+	//Also try "pathingStressTest.bmp"
 	ImageView robotImg;
 	Pane root;
 	Scene scene;
@@ -76,21 +77,11 @@ public class GridLayout extends Application{
 	
 	
 	private void loadrobotImage() { //Placing the robot Image
-		// TODO Auto-generated method stub
 		Image robotImage = new Image("File:robotImg.png", scale, scale, true, true);
 		robotImg = new ImageView(robotImage);
 		robotImg.setX(robot.getPosition().x*scale);
 		robotImg.setY(robot.getPosition().y*scale);
 		root.getChildren().add(robotImg);
-	}
-	
-	private void loadObjectImage(int x, int y) { //Placing the object Image on the coordinates x and y
-		// TODO Auto-generated method stub
-		Image objectImage = new Image("File:objectImg.jpg", scale, scale, true, true);
-		ImageView objectImg = new ImageView(objectImage);
-		objectImg.setX(x*scale);
-		objectImg.setY(y*scale);
-		root.getChildren().add(objectImg);
 	}
 	
 
@@ -216,6 +207,11 @@ public class GridLayout extends Application{
 				if (room.hasDirtAt(p)){
 					Circle dirt = new Circle(x*scale+(scale/5),y*scale+(scale/5),scale/6,Color.BROWN);
 					root.getChildren().add(dirt);
+				}
+				
+				if (!robot.known.hasDirtAt(p) && !robot.known.floorIsPlaceholder(p)){
+					Circle cleaned = new Circle(x*scale+(scale/5),(y+1)*scale-(scale/5),scale/6,Color.WHITE);
+					root.getChildren().add(cleaned);
 				}
 				
 				if(p.equals(robot.getObjective())){
