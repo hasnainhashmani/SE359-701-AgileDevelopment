@@ -59,10 +59,18 @@ public class RobotDummy {
 				//n=0, w=1,e=2,s=3
 				
 				switch (w){ //TODO clean this up. Basically it checks if we're in the bounds
-				case 0: visible.add(new Point(Math.min(Math.max(0,pos.x),toExplore.getWidth()-1),Math.min(Math.max(0,pos.y-1),toExplore.getHeight()-1)));
-				case 1: visible.add(new Point(Math.min(Math.max(0,pos.x-1),toExplore.getWidth()-1),Math.min(Math.max(0,pos.y),toExplore.getHeight()-1)));
-				case 2: visible.add(new Point(Math.min(Math.max(0,pos.x+1),toExplore.getWidth()-1),Math.min(Math.max(0,pos.y),toExplore.getHeight()-1)));;
-				case 3: visible.add(new Point(Math.min(Math.max(0,pos.x),toExplore.getWidth()-1),Math.min(Math.max(0,pos.y+1),toExplore.getHeight()-1)));
+				case 0: 
+					visible.add(new Point(Math.min(Math.max(0,pos.x),toExplore.getWidth()-1),Math.min(Math.max(0,pos.y-1),toExplore.getHeight()-1)));
+					break;
+				case 1: 
+					visible.add(new Point(Math.min(Math.max(0,pos.x-1),toExplore.getWidth()-1),Math.min(Math.max(0,pos.y),toExplore.getHeight()-1)));
+					break;
+				case 2: 
+					visible.add(new Point(Math.min(Math.max(0,pos.x+1),toExplore.getWidth()-1),Math.min(Math.max(0,pos.y),toExplore.getHeight()-1)));;
+					break;
+				case 3: 
+					visible.add(new Point(Math.min(Math.max(0,pos.x),toExplore.getWidth()-1),Math.min(Math.max(0,pos.y+1),toExplore.getHeight()-1)));
+					break;
 				}
 			}
 			known.addWall(pos, w, wall);

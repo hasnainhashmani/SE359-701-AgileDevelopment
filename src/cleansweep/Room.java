@@ -81,13 +81,13 @@ public class Room {
 		int tempX=p.x;
 		int tempY=p.y;
 		if (direction==DIR_N){
-			walls.get(tempY*2).add(tempX,wType);
+			walls.get(tempY*2).set(tempX,wType);
 		} else if (direction==DIR_S) {
-			walls.get((tempY*2)+2).add(tempX,wType);
+			walls.get((tempY*2)+2).set(tempX,wType);
 		} else if (direction==DIR_W){
-			walls.get((tempY*2)+1).add(tempX,wType);
+			walls.get((tempY*2)+1).set(tempX,wType);
 		} else{
-			walls.get((tempY*2)+1).add(tempX+1,wType);
+			walls.get((tempY*2)+1).set(tempX+1,wType);
 		}
 	}
 	
@@ -137,6 +137,7 @@ public class Room {
 			}
 			else{s+=" .";}
 		}
+		s+="\n";
 		return s;
 	}
 	

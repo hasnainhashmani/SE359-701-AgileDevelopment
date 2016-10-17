@@ -163,7 +163,7 @@ public class GridLayout extends Application{
 				for(int w =0;w<4;w++){
 					wall = walls[w];
 					wallSeen=walls[w]==wallsSeen[w];
-					if (! (wall==Room.WALL_NONE)){
+					if ((wall!=Room.WALL_NONE)){
 						//n=0, w=1,e=2,s=3
 						Line l = new Line();
 						if (wallSeen){
@@ -201,7 +201,9 @@ public class GridLayout extends Application{
 								
 						}
 						wallLines.add(l);
-					}}
+					} 
+					
+				}
 
 				
 				root.getChildren().add(rect);
