@@ -1,0 +1,38 @@
+<project name="cleansweep" default="compile" basedir=".">
+	<description>
+		Ant build file for group 7 Clean Sweep
+	</description>
+	
+	<target name="init">
+		<tstamp/>
+		<mkdir dir="bin"/>
+	</target>
+		
+	<path id="junit.classpath">
+		<fileset dir="junit">
+			<include name="*.jar" />
+		</fileset>
+	</path>
+
+	<target name="compile" depends="init" description="compile the source" >
+		<javac includeantruntime="false" srcdir="src" destdir="bin" debug="on">
+		</javac>
+        
+       <javac includeantruntime="false" srcdir="tests" destdir="bin" debug="on">
+		</javac>
+	</target>
+    
+	<target name="test" depends="compile">
+		<junit>
+			<classpath location="bin" />
+			<classpath refid="junit.classpath"/>
+			<formatter type="plain"/>
+			
+		</junit>
+	</target>
+	
+	<target name="clean">
+		<delete dir="bin"/>
+	</target>
+	
+</project>
