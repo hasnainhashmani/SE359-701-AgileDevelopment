@@ -1,4 +1,4 @@
-package cleansweep;
+package main.java.com.groupseven.cleansweep;
 
 import java.awt.Point;
 import java.util.ArrayList;
@@ -197,7 +197,7 @@ public class RobotDummy {
 			temp = bestPTemp;
 			checked.add(temp);
 			toCheck.remove(temp);
-			int tCost, hCost;
+			int tCost;
 			for(Point a:adjacent(temp)){
 				if(checked.contains(a)) continue; //already checked, skip
 				

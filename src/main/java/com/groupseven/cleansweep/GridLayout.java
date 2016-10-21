@@ -1,8 +1,7 @@
-package cleansweep;
+package main.java.com.groupseven.cleansweep;
 
 import java.awt.Point;
 import java.util.ArrayList;
-import java.util.Random;
 
 import javafx.application.Application;
 import javafx.event.ActionEvent;
@@ -59,7 +58,6 @@ public class GridLayout extends Application{
 		AnchorPane.setBottomAnchor(btn, 25.0);
 		AnchorPane.setRightAnchor(btn, 290.0);
 		btn.setOnAction(new EventHandler<ActionEvent>(){
-			@Override
 			public void handle(ActionEvent event) {
 				robot.step();
 				robotImg.setX(robot.getPosition().x*scale); //Moving robot image according to command
@@ -89,7 +87,6 @@ public class GridLayout extends Application{
 		// TODO Auto-generated method stub
 		scene.setOnKeyPressed(new EventHandler<KeyEvent>(){
 
-			@Override
 			public void handle(KeyEvent event) {
 				// TODO Auto-generated method stub
 				Point oldP = robot.getPosition();
