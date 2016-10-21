@@ -23,7 +23,7 @@
           <archive>
             <manifest>
               <addClasspath>true</addClasspath>
-              <mainClass>cleansweep.GridLayout</mainClass>
+              <mainClass>main.java.com.groupseven.cleansweep.GridLayout</mainClass>
             </manifest>
           </archive>
         </configuration>
