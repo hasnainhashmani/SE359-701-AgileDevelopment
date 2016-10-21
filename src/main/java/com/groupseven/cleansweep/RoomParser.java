@@ -43,7 +43,7 @@ public class RoomParser {
 	public static Room parseFile(String filename) throws IOException {
 		//takes in a filename in my format, spits out a room object. 
 		try{
-			FileInputStream f = new FileInputStream(filename);
+			InputStream f = RoomParser.class.getClassLoader().getResourceAsStream(filename);
 			f.skip(10);
 			byte[] buffer = new byte[4];
 			f.read(buffer);
