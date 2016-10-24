@@ -20,6 +20,7 @@ import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
 
 public class GridLayout extends Application{ 
+	
 	int scale = 40;
 	String filename = "rooms/samplefloor.bmp"; //TODO make this command line option or something
 	//Also try "pathingStressTest.bmp"
@@ -27,7 +28,7 @@ public class GridLayout extends Application{
 	Pane root;
 	Scene scene;
 	Room room;
-	RobotDummy robot;
+	Robot robot;
 
 	
 	public static void main(String[] args){
@@ -45,7 +46,7 @@ public class GridLayout extends Application{
 		room = RoomParser.parseFile(filename);
 		
 		//drawMap();
-		robot = new RobotDummy(room);
+		robot = new Robot(room);
 		//Loading and placing our robot
 		
 		drawMap();
@@ -58,6 +59,7 @@ public class GridLayout extends Application{
 		AnchorPane.setBottomAnchor(btn, 25.0);
 		AnchorPane.setRightAnchor(btn, 290.0);
 		btn.setOnAction(new EventHandler<ActionEvent>(){
+			 
 			public void handle(ActionEvent event) {
 				robot.step();
 				robotImg.setX(robot.getPosition().x*scale); //Moving robot image according to command
@@ -133,7 +135,7 @@ public class GridLayout extends Application{
 					rect.setFill(colors[0]);
 					rect.setStroke(Color.rgb(50,50,50));
 				} else {
-					if(robot.known.floorIsPlaceholder(p)){
+					if(robot.getKnown().floorIsPlaceholder(p)){
 						rect.setFill(colors[room.getFloorTypeAt(p)+1]); //floor tiles
 						rect.setStroke(colors[room.getFloorTypeAt(p)+1].deriveColor(1.0, 1.0, 0.7, 1.0));
 					}
@@ -147,7 +149,7 @@ public class GridLayout extends Application{
 				ArrayList<Line> wallLines = new ArrayList<Line>();
 				int wall;
 				int[] walls = room.wallsSurrounding(p);
-				int[] wallsSeen = robot.known.wallsSurrounding(p);
+				int[] wallsSeen = robot.getKnown().wallsSurrounding(p);
 				boolean wallSeen;
 				for(int w =0;w<4;w++){
 					wall = walls[w];
@@ -206,7 +208,7 @@ public class GridLayout extends Application{
 					root.getChildren().add(dirt);
 				}
 				
-				if (!robot.known.hasDirtAt(p) && !robot.known.floorIsPlaceholder(p)){
+				if (!robot.getKnown().hasDirtAt(p) && !robot.getKnown().floorIsPlaceholder(p)){
 					Circle cleaned = new Circle(x*scale+(scale/5),(y+1)*scale-(scale/5),scale/6,Color.WHITE);
 					root.getChildren().add(cleaned);
 				}
@@ -230,7 +232,5 @@ public class GridLayout extends Application{
 		}
 		loadrobotImage();
 	}
-	
-	
 
 }
