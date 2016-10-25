@@ -1,7 +1,7 @@
 /**
  * test file for room object
  */
-package test;
+package test.java.com.groupseven.cleansweep;
 
 import static org.junit.Assert.*;
 
