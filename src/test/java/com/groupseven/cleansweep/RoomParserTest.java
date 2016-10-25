@@ -2,16 +2,17 @@
  * test file for room object
  */
 package test.java.com.groupseven.cleansweep;
-
 import static org.junit.Assert.*;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 
 import org.junit.Test;
 
-import cleansweep.Room;
-import cleansweep.RoomParser;
-import cleansweep.Tile;
+import main.java.com.groupseven.cleansweep.Room;
+import main.java.com.groupseven.cleansweep.RoomParser;
+import main.java.com.groupseven.cleansweep.Tile;
 
 
 public class RoomParserTest {
@@ -20,7 +21,7 @@ public class RoomParserTest {
 	
 	@Test
 	public void byteLEtoIntTest() throws IOException {
-		File file =  new File("src/samplefloor.bmp");
+		File file =  new File("src/main/resources/rooms/samplefloor.bmp");
 	    f = new FileInputStream(file);
 	    f.skip(10);
 	    byte[] buffer = new byte[4];
@@ -69,11 +70,6 @@ public class RoomParserTest {
 	//test create a room, not sure if should be add more detail
 	@Test
 	public void parseFileTest () {
-		String file = "src/samplefloor.bmp";
-		try {
-			Room room1 = RoomParser.parseFile(file);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-		}
+		
 	}
 }
