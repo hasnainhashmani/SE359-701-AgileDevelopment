@@ -1,4 +1,4 @@
-package main.java.com.groupseven.cleansweep;
+package com.groupseven.cleansweep;
 
 public class Tile {
 	//handles carpet type, dirt level, and obstacle on the floor.

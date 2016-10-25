@@ -1,10 +1,9 @@
-package test.java.com.groupseven.cleansweep;
+package com.groupseven.cleansweep;
 
 import static org.junit.Assert.*;
 
 import org.junit.Test;
 
-import main.java.com.groupseven.cleansweep.Tile;
 
 public class TileTest {
 	Tile tile = new Tile();
