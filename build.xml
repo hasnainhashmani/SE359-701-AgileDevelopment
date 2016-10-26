@@ -42,12 +42,13 @@
 
 	<!-- Classes to test -->
 	<target name="testAll" depends="compile">
-		<junit printsummary="yes" fork="yes">
-			<test name="com.groupseven.cleansweep.TileTest" />
+		<junit printsummary="yes" fork="true">
+			<test name="com.groupseven.cleansweep.RoomParserTest"/>
+			<test name="com.groupseven.cleansweep.RoomTest"/>
+			<test name="com.groupseven.cleansweep.TileTest"/>
 
 			<classpath location="${build.dir}" />
 			<classpath refid="Maven Dependencies.libraryclasspath" />
-
 			<formatter type="plain" />
 		</junit>
 	</target>
