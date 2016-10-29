@@ -20,8 +20,12 @@ public class RobotTest {
 		String s = "rooms/samplefloor.bmp";
 		Room room = RoomParser.parseFile(s);
 		Robot robot = new Robot(room);
+		Point start = robot.getPosition();
 		robot.step();
 		robot.step();
+		robot.step();// from [2,5] to [1,5]
+		Point end = robot.getPosition();
+		robot.getPath(start, end);	
 	}
 	@Test
 	public void test(){
@@ -40,22 +44,24 @@ public class RobotTest {
 		Point temp2 = new Point(1,0);
 		toExplorepoints.add(temp2);
 		Point temp3 = new Point(1,1);
-		toExplorepoints.add(temp3);
 		for(Point p: toExplorepoints){
-		toExplore.addTile(p, t);
+			toExplore.addTile(p, t);
 		}
+		toExplore.addTile(temp3, new Tile(1,0,1));
+		//add all direction walls on temp1
 		toExplore.addWall(temp1, 3, 1);
 		toExplore.addWall(temp1, 1, 1);
 		toExplore.addWall(temp1, 2, 1);
-		toExplore.addWall(temp1, 4, 1);
+		toExplore.addWall(temp1, 0, 1);
 		//add wall east
 		toExplore.addWall(temp2, 2, 2);
 		Robot newRobot = new Robot(toExplore);
-		//if toExplore has dirt, clean instead of moving
 		assertTrue(toExplore.hasDirtAt(startPoint));
-		newRobot.step();
-		assertFalse(toExplore.hasDirtAt(startPoint));
+		newRobot.step();//since toExplore has dirt, clean instead of moving
+		assertFalse(toExplore.hasDirtAt(startPoint)); // no dirt after step
+		newRobot.forceMove(temp1); // forcemove to temp1
+		assertFalse(newRobot.canMove(temp1, 1));	//since all wall-wall around temp1, can not move temp1 to next point
+		newRobot.forceMove(temp2);
+		newRobot.forceMove(temp3);
 	}
-	//create known room
-
 }
