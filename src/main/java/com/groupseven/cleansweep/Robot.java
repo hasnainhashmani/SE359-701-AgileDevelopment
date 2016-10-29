@@ -187,7 +187,7 @@ public class Robot {
 		return bestTarget;
 	}	
 	
-	private boolean canMove(Point from,int direction){
+	public boolean canMove(Point from,int direction){
 		//checks if the motion from 'from' in 'direction' is obstructed by an obstacle or a wall. 
 		//TODO handle out of bounds (normally walls bound the room but if the room file is mildly messed up, handle it)
 		if(getKnown().wallsSurrounding(from)[direction]!=Room.WALL_NONE && getKnown().wallsSurrounding(from)[direction]!=Room.WALL_DOOROPEN) {
