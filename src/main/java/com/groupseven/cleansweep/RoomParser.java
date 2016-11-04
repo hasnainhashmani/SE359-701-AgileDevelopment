@@ -33,10 +33,10 @@ public class RoomParser {
 	}
 	
 	public static int intsToWall(int[] is){
-		if (is[0]==0) 	return Room.WALL_WALL;
-		if (is[0]==0x55) return Room.WALL_DOORCLOSED;
-		if (is[0]==0xAA) return Room.WALL_DOOROPEN;
-		if (is[0]==0xFF) return Room.WALL_NONE;
+		if (is[0]==0) 	return Wall.WALL_WALL;
+		if (is[0]==0x55) return Wall.DOOR_CLOSED;
+		if (is[0]==0xAA) return Wall.DOOR_OPEN;
+		if (is[0]==0xFF) return Wall.WALL_NONE; //TODO add changing door
 		return 0;
 	}
 	
@@ -71,14 +71,20 @@ public class RoomParser {
 					}
 					
 					if (y%2==0 && (x)%2==1){ //horiz wall
-						r.addWall(new Point(x/2, y/2), Room.DIR_N, intsToWall(pixel));
+						if(intsToWall(pixel)==Wall.DOOR_CLOSED || intsToWall(pixel)==Wall.DOOR_OPEN){
+							r.addRotatingDoor(new Point(x/2, y/2), Room.DIR_N, false, 1);
+						}
+						else r.addWall(new Point(x/2, y/2), Room.DIR_N, intsToWall(pixel));
 					} else if (y%2==1 && (x)%2==1){ //tile
 						r.addTile(new Point(x/2,y/2),intsToTile(pixel));
 						if (pixel[2]==1){ //handle objects (blue channel) here
 							r.setStartingPos(new Point(x/2,y/2));
 						}
 					} else if (y%2==1){ //vert wall
-						r.addWall(new Point(x/2, y/2), Room.DIR_W, intsToWall(pixel));
+						if(intsToWall(pixel)==Wall.DOOR_CLOSED || intsToWall(pixel)==Wall.DOOR_OPEN){
+							r.addRotatingDoor(new Point(x/2, y/2), Room.DIR_W, true, 1);
+						}
+						else r.addWall(new Point(x/2, y/2), Room.DIR_W, intsToWall(pixel));
 					}
 				}
 				f.skip(4-((xSize*3)%4));

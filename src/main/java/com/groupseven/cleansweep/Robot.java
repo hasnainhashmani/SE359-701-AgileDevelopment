@@ -82,12 +82,13 @@ public class Robot {
 		logger.getLOGGER().log(Level.INFO, "Robot moving from position: [" + this.getPos().x +", "+ this.getPos().y+"] to position: [" + next.x + ", " + next.y + "]");
 		
 		this.setPos(new Point(next.x, next.y)); //update stored position
+		gatherData(); 
 		//System.out.print(known); //This is handled by gui
 	}
 	
 	public void forceMove(Point p){
 		//This method allows someone in the GUI to move this robot's position arbitrarily (e.g. with arrow keys)
-		//WARNING: verify that you're not going through walls gui-side. Also this method will be deprecated next iteration.
+		//WARNING: verify that you're not going through walls gui-side. Also this method might be deprecated next iteration.
 		if (getKnown().hasDirtAt(pos) && !toExplore.hasDirtAt(pos)){
 			getKnown().clean(pos);
 		}
@@ -107,7 +108,7 @@ public class Robot {
 		for(int w = 0; w < 4; w++) {
 			wall = surrounded[w];
 			
-			if (wall==Room.WALL_NONE || wall==Room.WALL_DOOROPEN){
+			if (wall==Wall.WALL_NONE || wall==Wall.DOOR_OPEN){
 				//n=0, w=1,e=2,s=3
 				
 				switch (w) { //TODO clean this up. Basically it checks if we're in the bounds
@@ -129,7 +130,7 @@ public class Robot {
 					break;
 				}
 			}
-			else if(wall == Room.WALL_DOORCLOSED || wall == Room.WALL_WALL)
+			else if(wall == Wall.DOOR_CLOSED || wall == Wall.WALL_WALL)
 				logger.getLOGGER().log(Level.WARNING, "Robot sensor detecting a wall");
 			
 			getKnown().addWall(pos, w, wall);
@@ -172,9 +173,9 @@ public class Robot {
 			for(int x = 0; x < toExplore.getWidth(); x++) {
 				
 				tempPoint = new Point(x,y);
-				if(getKnown().hasDirtAt(tempPoint)) {
+				if(getKnown().hasDirtAt(tempPoint) && getPath(pos,tempPoint).size()>0) {
 					//tempDistance = distance(tempPoint, pos);
-					tempDistance = getPath(pos,tempPoint).size();
+					tempDistance = getPath(pos,tempPoint).size(); //TODO replace with fuel
 					
 					if (bestDistance>tempDistance) {
 						bestDistance = tempDistance;
@@ -190,7 +191,7 @@ public class Robot {
 	public boolean canMove(Point from,int direction){
 		//checks if the motion from 'from' in 'direction' is obstructed by an obstacle or a wall. 
 		//TODO handle out of bounds (normally walls bound the room but if the room file is mildly messed up, handle it)
-		if(getKnown().wallsSurrounding(from)[direction]!=Room.WALL_NONE && getKnown().wallsSurrounding(from)[direction]!=Room.WALL_DOOROPEN) {
+		if(getKnown().wallsSurrounding(from)[direction]!=Wall.WALL_NONE && getKnown().wallsSurrounding(from)[direction]!=Wall.DOOR_OPEN) {
 			return false;
 		} 
 		else {
@@ -281,7 +282,7 @@ public class Robot {
 					continue; //already checked, skip
 				}
 				
-				tCost = travelCost.get(temp)+1;
+				tCost = travelCost.get(temp)+1; //todo fuel cost
 				if(!toCheck.contains(a)) 
 					toCheck.add(a);
 				else if (tCost>travelCost.get(a))
@@ -292,6 +293,8 @@ public class Robot {
 				heurCost.put(a, travelCost.get(a)+distance(a,to));
 			}				
 		}
+		
+		if(checked.indexOf(to)==-1) return new ArrayList<Point>();
 		
 		temp=to;
 		

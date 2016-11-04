@@ -108,6 +108,9 @@ public class GridLayout extends Application{
 				case S:
 					robot.step();
 					break;
+				case R:
+					room.roomStep();
+					break;
 				default:
 					break;
 				}
@@ -154,7 +157,7 @@ public class GridLayout extends Application{
 				for(int w =0;w<4;w++){
 					wall = walls[w];
 					wallSeen=walls[w]==wallsSeen[w];
-					if ((wall!=Room.WALL_NONE)){
+					if ((wall!=Wall.WALL_NONE)){
 						//n=0, w=1,e=2,s=3
 						Line l = new Line();
 						if (wallSeen){
@@ -190,6 +193,15 @@ public class GridLayout extends Application{
 							l.setEndY(y*scale+scale);
 							break;
 								
+						}
+						if(wall==Wall.DOOR_OPEN && wallsSeen[w]==Wall.DOOR_OPEN){
+							l.setRotate(78.0); //Both agree 'open'
+						}
+						if(wallsSeen[w]==Wall.DOOR_OPEN && wall!=Wall.DOOR_OPEN){
+							l.setRotate(15.0); //robot expects 'open' but is closed
+						}
+						if(wallsSeen[w]!=Wall.DOOR_OPEN && wall==Wall.DOOR_OPEN){
+							l.setRotate(5.0); //robot expects 'closed' but is open
 						}
 						wallLines.add(l);
 					} 

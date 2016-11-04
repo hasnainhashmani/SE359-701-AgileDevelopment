@@ -64,7 +64,7 @@ public class RobotDummy {
 		int wall=0;
 		for(int w =0;w<4;w++){
 			wall = surrounded[w];
-			if (wall==Room.WALL_NONE || wall==Room.WALL_DOOROPEN){
+			if (wall==Wall.WALL_NONE || wall==Wall.DOOR_OPEN){
 				//n=0, w=1,e=2,s=3
 				
 				switch (w){ //TODO clean this up. Basically it checks if we're in the bounds
@@ -132,7 +132,7 @@ public class RobotDummy {
 	private boolean canMove(Point from,int direction){
 		//checks if the motion from 'from' in 'direction' is obstructed by an obstacle or a wall. 
 		//TODO handle out of bounds (normally walls bound the room but if the room file is mildly messed up, handle it)
-		if(known.wallsSurrounding(from)[direction]!=Room.WALL_NONE && known.wallsSurrounding(from)[direction]!=Room.WALL_DOOROPEN){
+		if(known.wallsSurrounding(from)[direction]!=Wall.WALL_NONE && known.wallsSurrounding(from)[direction]!=Wall.DOOR_OPEN){
 			return false;
 		} else{
 			Point next = new Point(from.x,from.y);
