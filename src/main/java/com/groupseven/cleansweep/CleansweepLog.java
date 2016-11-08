@@ -41,14 +41,25 @@ public class CleansweepLog {
 	}
 
 	/**
-	 * @return the lOGGER
+	 * @return the LOGGER
 	 */
-	public Logger getLOGGER() {
+	private Logger getLOGGER() {
 		return LOGGER;
 	}
 	
-	public void setLOGGERLevel(Level level) {
-		LOGGER.setLevel(level);
+	public void setLevel(Level level) {
+		getLOGGER().setLevel(level);
 	}
-
+	
+	public void log(Level level, String msg) {
+		getLOGGER().log(level, msg);
+	}
+	
+	public void config(String msg) {
+		getLOGGER().config(msg);
+	}
+	
+	public void fine(String msg) {
+		getLOGGER().fine(msg);
+	}
 }
