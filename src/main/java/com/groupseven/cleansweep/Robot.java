@@ -12,19 +12,28 @@ public class Robot {
 	private Room known; //TODO methods to access this? Right now GUI directly accesses it, possible unsafe
 	private Room toExplore;	
 	private Point pos;
-	/*** Logger also create a log file (log.txt) in project workspace for record keeping 
-	 *   Conig and Fine sensor data print to log.txt 
-	 **/
+	
+	// Logger also create a log file (log.txt) in project workspace for record keeping 
+	// Config and Fine sensor data print to log.txt 
 	CleansweepLog logger; 
 	
+	// powerSupply used to return power amount
+	private double powerSupply;
+	
+	// pathRecord is used to record the path of cleansweep
+	private ArrayList<Point> pathRecord;
+	
 	public Robot(Room toExplore){
+		this.setPowerSupply(powerSupply);
 		this.setPos(toExplore.getStartingPosition());
 		setKnown(new Room(toExplore.getWidth(), toExplore.getHeight()));
 		getKnown().setStartingPos(pos);
 		this.toExplore=toExplore;
 		logger = new CleansweepLog();
-		logger.getLOGGER().setLevel(Level.ALL);
-		logger.getLOGGER().config("Robot Created, Starting position: [" + this.getPos().x + ", " + this.getPos().y + "]");
+		logger.setLevel(Level.ALL);
+		logger.config("Robot Created, Starting position: [" + this.getPos().x + ", " + this.getPos().y + "]");
+		pathRecord = new ArrayList<Point>();
+		rechargePowerSupply(100);
 	}
 	
 	/**
@@ -48,6 +57,45 @@ public class Robot {
 	public void setPos(Point pos) {
 		this.pos = pos;
 	}
+	
+	public double getPowerSupply() {
+		return powerSupply;
+	}
+	
+	public void setPowerSupply(double power){
+		powerSupply = power;
+	}
+	
+	public void addToPathRecord(Point p) {
+		pathRecord.add(p);
+	}
+	
+	public void displayPathRecord() {
+		if(this.pathRecord.isEmpty())
+			System.out.println("No path recorded yet!");
+		else {
+			System.out.println(this.pathRecord);
+		}
+	}
+	
+	// Used to calculate power formula from previous to current tile point
+	private void powerConsumption(double i, double j) {
+		i++;
+		j++;
+		
+		if(this.getPowerSupply() <= 1)
+		{
+			throw new UnsupportedOperationException("Cleansweep needs to be recharged!!");
+		}
+		
+		double averageUnit = (i + j)/2;
+		
+		this.setPowerSupply(this.getPowerSupply() - averageUnit);		
+	}
+	
+	public void rechargePowerSupply(double ps){
+		this.setPowerSupply(ps);
+	}
 
 	public void step(){
 		//move one step in the simulation
@@ -66,11 +114,15 @@ public class Robot {
 		} 
 		else if (getKnown().hasDirtAt(this.getPos())) {			
 			getKnown().clean(this.getPos());
-			logger.getLOGGER().log(Level.INFO, "Robot Cleaning postion: [" + this.getPos().x + ", " + this.getPos().y + "]");
+			logger.log(Level.INFO, "Robot Cleaning postion: [" + this.getPos().x + ", " + this.getPos().y + "]");
+			
 		}
 	
 		gatherData(); //check all the sensors, add room data to stored data
 		Point p = getObjective(); //find the next place to clean (or, the charging station if we're out of fuel/dirt capacity)
+		
+		//record the path
+		addToPathRecord(p);		
 		
 		if(this.getPos().equals(p)) {
 			
@@ -78,8 +130,12 @@ public class Robot {
 		}
 		
 		Point next = getPath(this.getPos(), p).get(0);     //Plot a path to the next objective
-		logger.getLOGGER().log(Level.INFO, "position: [" + this.getPos().x +", "+ this.getPos().y+"] clean!!");
-		logger.getLOGGER().log(Level.INFO, "Robot moving from position: [" + this.getPos().x +", "+ this.getPos().y+"] to position: [" + next.x + ", " + next.y + "]");
+		logger.log(Level.INFO, "position: [" + this.getPos().x +", "+ this.getPos().y+"] clean!!");
+		logger.log(Level.INFO, "Robot moving from position: [" + this.getPos().x +", "+ this.getPos().y+"] to position: [" + next.x + ", " + next.y + "]");
+		powerConsumption(this.getKnown().getFloorTypeAt(this.getPos()), this.getKnown().getFloorTypeAt(next));
+		logger.log(Level.INFO, "The power supply is has " + this.getPowerSupply() + " units remaining");
+		if(this.getPowerSupply() <= 20) 
+			logger.log(Level.WARNING, "Cleansweep is running low on power, need to be recharged!");
 		
 		this.setPos(new Point(next.x, next.y)); //update stored position
 		gatherData(); 
@@ -114,24 +170,24 @@ public class Robot {
 				switch (w) { //TODO clean this up. Basically it checks if we're in the bounds
 				case Room.DIR_N: 					
 					visible.add(new Point(Math.min(Math.max(0,pos.x),toExplore.getWidth()-1),Math.min(Math.max(0,pos.y-1),toExplore.getHeight()-1)));
-					logger.getLOGGER().fine("North Sensor detecting open space");
+					logger.fine("North Sensor detecting open space");
 					break;
 				case Room.DIR_W: 					
 					visible.add(new Point(Math.min(Math.max(0,pos.x-1),toExplore.getWidth()-1),Math.min(Math.max(0,pos.y),toExplore.getHeight()-1)));
-					logger.getLOGGER().fine("West Sensor detecting open space");
+					logger.fine("West Sensor detecting open space");
 					break;
 				case Room.DIR_E: 					
 					visible.add(new Point(Math.min(Math.max(0,pos.x+1),toExplore.getWidth()-1),Math.min(Math.max(0,pos.y),toExplore.getHeight()-1)));
-					logger.getLOGGER().fine("East Sensor detecting open space");
+					logger.fine("East Sensor detecting open space");
 					break;
 				case Room.DIR_S: 					
 					visible.add(new Point(Math.min(Math.max(0,pos.x),toExplore.getWidth()-1),Math.min(Math.max(0,pos.y+1),toExplore.getHeight()-1)));
-					logger.getLOGGER().fine("South Sensor detecting open space");
+					logger.fine("South Sensor detecting open space");
 					break;
 				}
 			}
 			else if(wall == Wall.DOOR_CLOSED || wall == Wall.WALL_WALL)
-				logger.getLOGGER().log(Level.WARNING, "Robot sensor detecting a wall");
+				logger.log(Level.WARNING, "Robot sensor detecting a wall");
 			
 			getKnown().addWall(pos, w, wall);
 		}
@@ -159,6 +215,15 @@ public class Robot {
 	}
 	
 	public Point getObjective(){
+		
+		if(!(this.getPowerSupply() <= 20)) {
+			// Path to the nearest unclean tile
+			
+		}
+		else {
+			// Path to the nearest charging station
+		}		
+		
 		//Returns the best point to travel to. Usually the nearest uncleaned tile
 		//TODO prioritize finishing a room before moving on
 		//If we have to, go to the charging station. Otherwise, find the nearest uncleaned block. 
