@@ -1,6 +1,6 @@
 package com.groupseven.cleansweep;
 
-import java.awt.Point;
+
 import java.util.ArrayList;
 
 import javafx.application.Application;
@@ -40,8 +40,7 @@ public class GridLayout extends Application{
 		// TODO Auto-generated method stub
 		//Random number generator for objects
 		
-		root = new AnchorPane();
-		
+		root = new AnchorPane();	
 		
 		room = RoomParser.parseFile(filename);
 		
@@ -127,6 +126,7 @@ public class GridLayout extends Application{
 	private void drawMap() { //creating the map and objects.
 		// TODO Auto-generated method stub
 		Point p;
+		
 		for(int x=0; x<room.getWidth(); x++){
 			for(int y=0; y<room.getHeight(); y++){
 				p=new Point(x,y);
@@ -146,8 +146,7 @@ public class GridLayout extends Application{
 					rect.setFill(colors[room.getFloorTypeAt(p)+1].deriveColor(60.0, 1.0, 1.0, 1.0)); //floor tiles
 					rect.setStroke(colors[room.getFloorTypeAt(p)+1].deriveColor(60.0, 1.0, 0.7, 1.0));
 					}
-				}
-				
+				}				
 				
 				ArrayList<Line> wallLines = new ArrayList<Line>();
 				int wall;

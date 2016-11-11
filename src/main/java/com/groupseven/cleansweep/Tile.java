@@ -1,5 +1,6 @@
 package com.groupseven.cleansweep;
 
+
 public class Tile {
 	//handles carpet type, dirt level, and obstacle on the floor.
 	public static final int CARPET_BARE = 0;
@@ -9,6 +10,8 @@ public class Tile {
 	public static final int OBSTACLE_NONE = 0;
 	public static final int OBSTACLE_BLOCK = 1;
 	public static final int OBSTACLE_STAIRS = 2;
+	
+	private ChargingStation chargingStation;
 	
 	private int carpet;
 	private int dirtLevel;
@@ -20,6 +23,7 @@ public class Tile {
 		this.dirtLevel=-1;
 		this.obstacleType=-1;
 		this.placeholder=true;
+		this.setChargingStation(chargingStation);
 	}
 	
 	public Tile(int carpetType, int dirt, int obstacle){
@@ -27,6 +31,7 @@ public class Tile {
 		this.dirtLevel=dirt;
 		this.obstacleType=obstacle;
 		this.placeholder=false;
+		this.setChargingStation(chargingStation);
 	}
 	
 	public boolean isPlaceholder(){return placeholder;}
@@ -40,5 +45,16 @@ public class Tile {
 	public boolean hasDirt(){return dirtLevel>0;}
 	public int getObstacleType(){return obstacleType;}
 	
+	public ChargingStation getChargingStation() {
+		return chargingStation;
+	}
+
+	public void setChargingStation(ChargingStation cs) {
+		this.chargingStation = cs;
+	}
+	
+	public boolean isChargingStation() {
+		return this.getChargingStation() != null;
+	}
 	
 }

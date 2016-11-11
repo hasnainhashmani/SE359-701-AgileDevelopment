@@ -1,6 +1,6 @@
 package com.groupseven.cleansweep;
 
-import java.awt.Point;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;

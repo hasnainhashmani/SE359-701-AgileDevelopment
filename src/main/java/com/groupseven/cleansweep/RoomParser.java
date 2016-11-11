@@ -1,12 +1,9 @@
 package com.groupseven.cleansweep;
 
 import java.io.*;
-import java.awt.Point;
+
 
 public class RoomParser {
-	//TODO turn into interface? factory?
-	//This class takes in a filename (parseFile) and spits out a Room object.
-	
 	public static int byteLEtoInt(byte[] b){
 		int val = 0;
         for (int i=3; i>=0; i--) {
@@ -86,8 +83,12 @@ public class RoomParser {
 						}
 						else r.addWall(new Point(x/2, y/2), Room.DIR_W, intsToWall(pixel));
 					}
+					
+				
 				}
 				f.skip(4-((xSize*3)%4));
+				
+
 			}
 			f.close();
 			return r;

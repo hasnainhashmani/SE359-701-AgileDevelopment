@@ -1,11 +1,13 @@
 package com.groupseven.cleansweep;
 
-import java.awt.Point;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.PriorityQueue;
 import java.util.logging.Level;
+
 
 public class Robot {
 	
@@ -20,8 +22,17 @@ public class Robot {
 	// powerSupply used to return power amount
 	private double powerSupply;
 	
+	// starting power
+	private double power = 100.00;
+	
+	// power limit to start searching for charging station
+	private final int powerlimit = 20;
+	
 	// pathRecord is used to record the path of cleansweep
 	private ArrayList<Point> pathRecord;
+	
+	// record of charging stations
+	private Collection<Point> chargingStations;
 	
 	public Robot(Room toExplore){
 		this.setPowerSupply(powerSupply);
@@ -33,18 +44,19 @@ public class Robot {
 		logger.setLevel(Level.ALL);
 		logger.config("Robot Created, Starting position: [" + this.getPos().x + ", " + this.getPos().y + "]");
 		pathRecord = new ArrayList<Point>();
-		rechargePowerSupply(100);
+		this.setPowerSupply(power);
+		chargingStations = new ArrayList<Point>();		
 	}
 	
 	/**
-	 * @return the known
+	 * @return the known room
 	 */
 	public Room getKnown() {
 		return known;
 	}
 
 	/**
-	 * @param known the known to set
+	 * @param known the room to set
 	 */
 	public void setKnown(Room known) {
 		this.known = known;
@@ -71,21 +83,23 @@ public class Robot {
 	}
 	
 	public void displayPathRecord() {
-		if(this.pathRecord.isEmpty())
+		if(this.pathRecord.isEmpty()) {
 			System.out.println("No path recorded yet!");
-		else {
-			System.out.println(this.pathRecord);
-		}
+			logger.log(Level.INFO, "No path recorded yet!");
+		}		
 	}
 	
-	// Used to calculate power formula from previous to current tile point
+	/**
+	 * Used to calculate power from previous to current tile point
+	 * @param i is previous tile point
+	 * @param j is current tile point
+	 */
 	private void powerConsumption(double i, double j) {
 		i++;
 		j++;
 		
-		if(this.getPowerSupply() <= 1)
-		{
-			throw new UnsupportedOperationException("Cleansweep needs to be recharged!!");
+		if(this.getPowerSupply() <= 1) {
+			throw new UnsupportedOperationException("Cleansweep has no power!!");
 		}
 		
 		double averageUnit = (i + j)/2;
@@ -93,8 +107,20 @@ public class Robot {
 		this.setPowerSupply(this.getPowerSupply() - averageUnit);		
 	}
 	
+	/**
+	 * Used to re-charge robot	
+	 * @param ps is power amount
+	 */
 	public void rechargePowerSupply(double ps){
 		this.setPowerSupply(ps);
+	}
+
+	public Collection<Point> getChargingStations() {
+		return chargingStations;
+	}
+
+	public void addToChargingStations(Point p) {
+		this.chargingStations.add(p);
 	}
 
 	public void step(){
@@ -121,6 +147,16 @@ public class Robot {
 		gatherData(); //check all the sensors, add room data to stored data
 		Point p = getObjective(); //find the next place to clean (or, the charging station if we're out of fuel/dirt capacity)
 		
+		// If robot power low and charging station found, re-charge robot
+		if(this.getPowerSupply() < powerlimit && this.getPos().equals(p)) {
+
+			this.known.getChargingStation(p).recharge(this);
+			System.out.println("Robot recharging");
+			logger.log(Level.INFO, "Robot recharging!!");
+			System.out.println("Robot fully recharged");
+			logger.log(Level.INFO, "Robot fully recharged!!");
+			
+		}
 		//record the path
 		addToPathRecord(p);		
 		
@@ -133,9 +169,13 @@ public class Robot {
 		logger.log(Level.INFO, "position: [" + this.getPos().x +", "+ this.getPos().y+"] clean!!");
 		logger.log(Level.INFO, "Robot moving from position: [" + this.getPos().x +", "+ this.getPos().y+"] to position: [" + next.x + ", " + next.y + "]");
 		powerConsumption(this.getKnown().getFloorTypeAt(this.getPos()), this.getKnown().getFloorTypeAt(next));
-		logger.log(Level.INFO, "The power supply is has " + this.getPowerSupply() + " units remaining");
-		if(this.getPowerSupply() <= 20) 
+		logger.log(Level.INFO, "Robot power supply has " + this.getPowerSupply() + " units remaining");
+		
+		// if power is 20 units or less log re-charge warning
+		if(this.getPowerSupply() <= powerlimit) {
 			logger.log(Level.WARNING, "Cleansweep is running low on power, need to be recharged!");
+			logger.log(Level.WARNING, "Searching for charging station at position: [" + p.x + ", " + p.y +"]");
+		}
 		
 		this.setPos(new Point(next.x, next.y)); //update stored position
 		gatherData(); 
@@ -168,21 +208,49 @@ public class Robot {
 				//n=0, w=1,e=2,s=3
 				
 				switch (w) { //TODO clean this up. Basically it checks if we're in the bounds
-				case Room.DIR_N: 					
-					visible.add(new Point(Math.min(Math.max(0,pos.x),toExplore.getWidth()-1),Math.min(Math.max(0,pos.y-1),toExplore.getHeight()-1)));
+				case Room.DIR_N:
+					Point np_n = new Point(Math.min(Math.max(0,pos.x),toExplore.getWidth()-1),Math.min(Math.max(0,pos.y-1),toExplore.getHeight()-1));
+					visible.add(np_n);
 					logger.fine("North Sensor detecting open space");
+					if(known.chargingStationExist(np_n)){
+						if(!this.getChargingStations().contains(np_n))
+							this.addToChargingStations(np_n);
+						
+						logger.log(Level.INFO, "Sensor detecting charging station at position " + np_n.getX() + " " +np_n.getY());
+					}
 					break;
-				case Room.DIR_W: 					
-					visible.add(new Point(Math.min(Math.max(0,pos.x-1),toExplore.getWidth()-1),Math.min(Math.max(0,pos.y),toExplore.getHeight()-1)));
+				case Room.DIR_W: 
+					Point np_w = new Point(Math.min(Math.max(0,pos.x-1),toExplore.getWidth()-1),Math.min(Math.max(0,pos.y),toExplore.getHeight()-1));
+					visible.add(np_w);
 					logger.fine("West Sensor detecting open space");
+					if(known.chargingStationExist(np_w)){
+						if(!this.getChargingStations().contains(np_w))
+							this.addToChargingStations(np_w);
+						
+						logger.log(Level.INFO, "Sensor detecting charging station at position " + np_w.getX() + " " +np_w.getY());
+					}
 					break;
-				case Room.DIR_E: 					
-					visible.add(new Point(Math.min(Math.max(0,pos.x+1),toExplore.getWidth()-1),Math.min(Math.max(0,pos.y),toExplore.getHeight()-1)));
+				case Room.DIR_E: 	
+					Point np_e = new Point(Math.min(Math.max(0,pos.x+1),toExplore.getWidth()-1),Math.min(Math.max(0,pos.y),toExplore.getHeight()-1));
+					visible.add(np_e);
 					logger.fine("East Sensor detecting open space");
+					if(known.chargingStationExist(np_e)){
+						if(!this.getChargingStations().contains(np_e))
+							this.addToChargingStations(np_e);
+						
+						logger.log(Level.INFO, "Sensor detecting charging station at position " + np_e.getX() + " " +np_e.getY());
+					}
 					break;
-				case Room.DIR_S: 					
-					visible.add(new Point(Math.min(Math.max(0,pos.x),toExplore.getWidth()-1),Math.min(Math.max(0,pos.y+1),toExplore.getHeight()-1)));
+				case Room.DIR_S: 
+					Point np_s = new Point(Math.min(Math.max(0,pos.x),toExplore.getWidth()-1),Math.min(Math.max(0,pos.y+1),toExplore.getHeight()-1));
+					visible.add(np_s);
 					logger.fine("South Sensor detecting open space");
+					if(known.chargingStationExist(np_s)){
+						if(!this.getChargingStations().contains(np_s))
+							this.addToChargingStations(np_s);
+						
+						logger.log(Level.INFO, "Sensor detecting charging station at position " + np_s.getX() + " " +np_s.getY());
+					}
 					break;
 				}
 			}
@@ -214,37 +282,68 @@ public class Robot {
 		return (Math.abs(b.x-a.x)+Math.abs(b.y-a.y)); 
 	}
 	
+	/**
+	 * getObjective updated
+	 * if robot power is 20 units or less 
+	 * search for nearest charging station
+	 * @return nearest charging station point
+	 */
 	public Point getObjective(){
-		
-		if(!(this.getPowerSupply() <= 20)) {
-			// Path to the nearest unclean tile
-			
-		}
-		else {
-			// Path to the nearest charging station
-		}		
 		
 		//Returns the best point to travel to. Usually the nearest uncleaned tile
 		//TODO prioritize finishing a room before moving on
 		//If we have to, go to the charging station. Otherwise, find the nearest uncleaned block. 
 		//For now, no charging required (and full dirt capacity) TODO
 		int bestDistance=Integer.MAX_VALUE;
-		Point bestTarget=pos; //TODO replace with charging station if necessary
+		Point bestTarget;
 		int tempDistance;
 		Point tempPoint;
 		
-		for(int y = 0; y < toExplore.getHeight(); y++) {
+		if(!(this.getPowerSupply() <= powerlimit)) {
 			
-			for(int x = 0; x < toExplore.getWidth(); x++) {
+			bestTarget=pos; //TODO replace with charging station if necessary
+			// Path to the nearest unclean tile
+			for(int y = 0; y < toExplore.getHeight(); y++) {
 				
-				tempPoint = new Point(x,y);
-				if(getKnown().hasDirtAt(tempPoint) && getPath(pos,tempPoint).size()>0) {
-					//tempDistance = distance(tempPoint, pos);
-					tempDistance = getPath(pos,tempPoint).size(); //TODO replace with fuel
+				for(int x = 0; x < toExplore.getWidth(); x++) {
 					
-					if (bestDistance>tempDistance) {
-						bestDistance = tempDistance;
-						bestTarget = tempPoint;
+					tempPoint = new Point(x,y);
+					if(getKnown().hasDirtAt(tempPoint) && getPath(pos,tempPoint).size()>0) {
+						//tempDistance = distance(tempPoint, pos);
+						tempDistance = getPath(pos,tempPoint).size(); //TODO replace with fuel
+						
+						if (bestDistance>tempDistance) {
+							bestDistance = tempDistance;
+							bestTarget = tempPoint;
+						}
+					}
+				}
+			}
+			
+		}
+		else {
+			bestTarget = pos; //TODO replace with charging station if necessary
+			ArrayList<Point> stationsHolder = new ArrayList<Point>(this.getChargingStations());
+			
+			for(int i = 0; i < this.getChargingStations().size(); i++) {
+				stationsHolder.set(i, new Point(stationsHolder.get(i).x,  stationsHolder.get(i).y, this.getPos()));
+			}
+			
+			tempPoint = new ArrayList<Point>(this.getClosestChargingStation(stationsHolder, 1)).get(0);
+			
+			// Path to the nearest charging station
+			for(int y = 0; y < toExplore.getHeight(); y++) {
+				
+				for(int x = 0; x < toExplore.getWidth(); x++) {				
+					
+					if(getPath(pos, tempPoint).size()>0) {
+						//tempDistance = distance(tempPoint, pos);
+						tempDistance = getPath(pos,tempPoint).size(); //TODO replace with fuel
+						
+						if (bestDistance>tempDistance) {
+							bestDistance = tempDistance;
+							bestTarget = tempPoint;
+						}
 					}
 				}
 			}
@@ -376,5 +475,30 @@ public class Robot {
 	public Point getPosition(){
 		return new Point(pos.x,pos.y);
 	}
+	
+	/**
+	 * 
+	 * @param points
+	 * @param n
+	 * @return the closest charging station point
+	 */
+    public Collection<Point> getClosestChargingStation(Collection<Point> points, int n) {
+        PriorityQueue<Point> queue = new PriorityQueue<Point>(n);
+
+        for (Point point : points) {
+            if (queue.size() < n) {
+                queue.offer(point);
+            } else {
+                if (queue.peek().compareTo(point) < 0) {
+                    queue.poll();
+                    queue.offer(point);
+                }
+            }
+        }
+
+        return queue;
+    }
 
 }
+
+

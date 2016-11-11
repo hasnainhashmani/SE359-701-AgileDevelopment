@@ -2,9 +2,10 @@ package com.groupseven.cleansweep;
 
 import java.util.List;
 import java.util.ArrayList;
-import java.awt.Point;
+import java.util.HashMap;
 
 public class Room {
+	
 	public static final int DIR_N = 0; //TODO replace with enum
 	public static final int DIR_W = 1;
 	public static final int DIR_E = 2;
@@ -17,9 +18,13 @@ public class Room {
 	
 	private Point startingPos;
 	
+	private HashMap<Point, ChargingStation> roomChargingStations;
+	
+	
 	public Room(int width, int height){
 		this.w=width;
 		this.h=height;
+		roomChargingStations = new HashMap<Point, ChargingStation>();
 		this.startingPos=new Point(0,0);
 		floor = new ArrayList<List<Tile>>();
 		walls = new ArrayList<List<Wall>>();
@@ -36,10 +41,18 @@ public class Room {
 			walls.get(y*2).add(new Wall(Wall.WALL_NONE));
 			walls.get(y*2+1).add(new Wall(Wall.WALL_NONE));
 		}
+		
+		
 		walls.add(new ArrayList<Wall>());
 		for (int x = 0; x<width+1; x++){
 			walls.get(height*2).add(new Wall(Wall.WALL_NONE));
 		}
+		
+		// Add charging stations to room
+		this.addChargingStation(new Point(0,5));
+		this.addChargingStation(new Point(2,5));
+		this.addChargingStation(new Point(4,6));
+
 	}
 	
 	public void addTile(Point p, Tile t){
@@ -198,4 +211,28 @@ public class Room {
 	public int getWidth(){return w;}
 	public int getHeight(){return h;}
 	
+	// Added Charging Station to room.
+	public void addChargingStation(Point p) {
+		ChargingStation cs = new ChargingStation();
+		floor.get(p.x).get(p.y).setChargingStation(cs);		
+		this.roomChargingStations.put(p, cs);
+	}
+	
+	public ChargingStation getChargingStation(Point p){
+		System.out.println(roomChargingStations);
+		if(this.roomChargingStations.containsKey(p)){
+			return this.roomChargingStations.get(p);
+		}
+		else
+			return null;
+	}
+	
+	public boolean chargingStationExist(Point p) {
+		if(this.floor.get(p.x).get(p.y).isChargingStation()) {
+			return true;			
+		}	
+		
+		return false;
+			
+	}
 }
