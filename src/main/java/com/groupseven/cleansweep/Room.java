@@ -219,7 +219,7 @@ public class Room {
 	}
 	
 	public ChargingStation getChargingStation(Point p){
-		System.out.println(roomChargingStations);
+		
 		if(this.roomChargingStations.containsKey(p)){
 			return this.roomChargingStations.get(p);
 		}
