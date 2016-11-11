@@ -18,6 +18,10 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
+import javafx.scene.text.Text;
+import javafx.scene.text.Font;
+
+import java.awt.Point;
 
 public class GridLayout extends Application{ 
 	
@@ -29,7 +33,7 @@ public class GridLayout extends Application{
 	Scene scene;
 	Room room;
 	Robot robot;
-
+	Button btn;
 	
 	public static void main(String[] args){
 		launch(args);
@@ -43,15 +47,16 @@ public class GridLayout extends Application{
 		root = new AnchorPane();	
 		
 		room = RoomParser.parseFile(filename);
+		room.addChargingStation(new Point(4,6));//TODO implement through roomparser
 		
 		//drawMap();
 		robot = new Robot(room);
 		//Loading and placing our robot
 		
-		drawMap();
+
 		
 		//Button for resetting the game
-		Button btn = new Button();
+		btn = new Button();
 		btn.setText("Step");
 		btn.setScaleX(1.5);
 		btn.setScaleY(1.5);
@@ -61,13 +66,14 @@ public class GridLayout extends Application{
 			 
 			public void handle(ActionEvent event) {
 				robot.step();
-				robotImg.setX(robot.getPosition().x*scale); //Moving robot image according to command
-				robotImg.setY(robot.getPosition().y*scale); //
+				robotImg.setX(robot.getPos().x*scale); //Moving robot image according to command
+				robotImg.setY(robot.getPos().y*scale); //
 				drawMap();
 			}
 			
 		});
-		root.getChildren().add(btn);
+		drawMap();
+		//root.getChildren().add(btn);
 		scene = new Scene(root, 625,700);
 		gridStage.setScene(scene);
 		gridStage.show();
@@ -78,8 +84,8 @@ public class GridLayout extends Application{
 	private void loadrobotImage() { //Placing the robot Image
 		Image robotImage = new Image("images/robotImg.png", scale, scale, true, true);
 		robotImg = new ImageView(robotImage);
-		robotImg.setX(robot.getPosition().x*scale);
-		robotImg.setY(robot.getPosition().y*scale);
+		robotImg.setX(robot.getPos().x*scale);
+		robotImg.setY(robot.getPos().y*scale);
 		root.getChildren().add(robotImg);
 	}
 	
@@ -90,19 +96,19 @@ public class GridLayout extends Application{
 
 			public void handle(KeyEvent event) {
 				// TODO Auto-generated method stub
-				Point oldP = robot.getPosition();
+				Point oldP = robot.getPos();
 				switch(event.getCode()){
 				case RIGHT:
-					if (robot.getPosition().x<room.getWidth()-1) robot.forceMove(new Point(oldP.x+1,oldP.y));
+					if (robot.getPos().x<room.getWidth()-1) robot.forceMove(new Point(oldP.x+1,oldP.y));
 					break;
 				case LEFT:
-					if (robot.getPosition().x>0) robot.forceMove(new Point(oldP.x-1,oldP.y));
+					if (robot.getPos().x>0) robot.forceMove(new Point(oldP.x-1,oldP.y));
 					break;
 				case DOWN:
-					if (robot.getPosition().y<room.getHeight()-1) robot.forceMove(new Point(oldP.x,oldP.y+1));
+					if (robot.getPos().y<room.getHeight()-1) robot.forceMove(new Point(oldP.x,oldP.y+1));
 					break;
 				case UP:
-					if (robot.getPosition().y>0) robot.forceMove(new Point(oldP.x,oldP.y-1));
+					if (robot.getPos().y>0) robot.forceMove(new Point(oldP.x,oldP.y-1));
 					break;
 				case S:
 					robot.step();
@@ -113,8 +119,8 @@ public class GridLayout extends Application{
 				default:
 					break;
 				}
-				robotImg.setX(robot.getPosition().x*scale); //Moving robot image according to command
-				robotImg.setY(robot.getPosition().y*scale); //
+				robotImg.setX(robot.getPos().x*scale); //Moving robot image according to command
+				robotImg.setY(robot.getPos().y*scale); //
 				drawMap();
 			}
 		});
@@ -124,9 +130,23 @@ public class GridLayout extends Application{
 	private Color[] colorWalls = {Color.BLACK,Color.rgb(255,0,0),Color.rgb(0,255,0)};
 
 	private void drawMap() { //creating the map and objects.
-		// TODO Auto-generated method stub
+		//root.getChildren().removeAll();
+		root.getChildren().clear();
+		Rectangle clear = new Rectangle(0,0,room.getWidth()*scale+800, room.getHeight()*scale+800);
+		clear.setFill(Color.rgb(150, 150, 150));
+		root.getChildren().add(clear);
+
 		Point p;
 		
+		//Add some robot data
+		Text t = new Text(room.getWidth()*scale+5,50, "Dirt capacity:" + robot.getDirtCapacity());
+		t.setFont(new Font(20));
+		Text t2 = new Text(room.getWidth()*scale+5,70, "Power remaining:" + robot.getPowerSupply());
+		t2.setFont(new Font(20));
+		root.getChildren().add(t);
+		root.getChildren().add(t2);
+		
+		//Here's the room
 		for(int x=0; x<room.getWidth(); x++){
 			for(int y=0; y<room.getHeight(); y++){
 				p=new Point(x,y);
@@ -230,8 +250,8 @@ public class GridLayout extends Application{
 				}
 				
 				Line pathLine;
-				Point tempPrevStep = robot.getPosition();
-				for(Point pathStep: robot.getPath(robot.getPosition(),robot.getObjective())){
+				Point tempPrevStep = robot.getPos();
+				for(Point pathStep: robot.getPath(robot.getPos(),robot.getObjective())){
 					pathLine = new Line(tempPrevStep.x*scale+(scale/2),tempPrevStep.y*scale+(scale/2),pathStep.x*scale+(scale/2),pathStep.y*scale+(scale/2));
 					pathLine.setStroke(Color.CADETBLUE);
 					pathLine.setStrokeWidth(3);
@@ -242,6 +262,7 @@ public class GridLayout extends Application{
 			}
 		}
 		loadrobotImage();
+		root.getChildren().add(btn);
 	}
 
 }

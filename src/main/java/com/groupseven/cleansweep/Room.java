@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import java.awt.Point;
+
 public class Room {
 	
 	public static final int DIR_N = 0; //TODO replace with enum
@@ -47,11 +49,6 @@ public class Room {
 		for (int x = 0; x<width+1; x++){
 			walls.get(height*2).add(new Wall(Wall.WALL_NONE));
 		}
-		
-		// Add charging stations to room
-		this.addChargingStation(new Point(0,5));
-		this.addChargingStation(new Point(2,5));
-		this.addChargingStation(new Point(4,6));
 
 	}
 	

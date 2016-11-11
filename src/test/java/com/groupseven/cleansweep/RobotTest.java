@@ -20,11 +20,11 @@ public class RobotTest {
 		String s = "rooms/samplefloor.bmp";
 		Room room = RoomParser.parseFile(s);
 		Robot robot = new Robot(room);
-		Point start = robot.getPosition();
+		Point start = robot.getPos();
 		robot.step();
 		robot.step();
 		robot.step();// from [2,5] to [1,5]
-		Point end = robot.getPosition();
+		Point end = robot.getPos();
 		robot.getPath(start, end);	
 	}
 	@Test

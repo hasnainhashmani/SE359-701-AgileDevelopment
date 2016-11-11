@@ -54,7 +54,7 @@ public class Tile {
 	}
 	
 	public boolean isChargingStation() {
-		return this.getChargingStation() != null;
+		return this.getChargingStation() != null; //TODO isn't this bad?
 	}
 	
 }
