@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.PriorityQueue;
+import java.util.Scanner;
 import java.util.logging.Level;
 
 
@@ -34,6 +35,10 @@ public class Robot {
 	// record of charging stations
 	private Collection<Point> chargingStations;
 	
+	//
+	private int dirtCapacity = 0;
+	private final int dirtCapacityLimit = 20;
+	
 	public Robot(Room toExplore){
 		this.setPowerSupply(powerSupply);
 		this.setPos(toExplore.getStartingPosition());
@@ -45,6 +50,7 @@ public class Robot {
 		logger.config("Robot Created, Starting position: [" + this.getPos().x + ", " + this.getPos().y + "]");
 		pathRecord = new ArrayList<Point>();
 		this.setPowerSupply(power);
+		this.setDirtCapacity(dirtCapacity);
 		chargingStations = new ArrayList<Point>();		
 	}
 	
@@ -122,6 +128,52 @@ public class Robot {
 	public void addToChargingStations(Point p) {
 		this.chargingStations.add(p);
 	}
+	
+	public void setDirtCapacity(int dc) {
+		this.dirtCapacity = dc;
+	}
+	
+	public int getDirtCapacity() {
+		return dirtCapacity;
+	}
+	
+	private void dirtConsumption() {
+		if(this.getDirtCapacity() == this.dirtCapacityLimit)
+			logger.log(Level.WARNING, "Dirt Capcity Full!!");
+		else
+			this.setDirtCapacity(this.getDirtCapacity() + 1);
+	}
+	
+	public boolean isDirtCapacityFull() {
+		return this.getDirtCapacity() == dirtCapacityLimit;
+	}
+	
+	public void emptyCleansweep() {
+		this.setDirtCapacity(0);
+	}
+	
+	private void capacityCheck() {
+		@SuppressWarnings("resource")
+		Scanner input = new Scanner(System.in);
+		String ans;
+		try {
+			if(isDirtCapacityFull()) {
+				
+				do {
+					System.out.print("Robot capcity full! Empty robot Yes or No: ");					
+					ans = input.next();		
+					System.out.println();
+				}
+				while(!ans.equalsIgnoreCase("yes"));
+				
+				this.setDirtCapacity(0);			
+				System.out.println("Press Step to continue with robot!");
+			}
+		}
+		catch(Throwable e) {
+			this.capacityCheck();
+		}
+	}
 
 	public void step(){
 		//move one step in the simulation
@@ -139,9 +191,13 @@ public class Robot {
 			return;
 		} 
 		else if (getKnown().hasDirtAt(this.getPos())) {			
-			getKnown().clean(this.getPos());
+			this.getKnown().clean(this.getPos());
 			logger.log(Level.INFO, "Robot Cleaning postion: [" + this.getPos().x + ", " + this.getPos().y + "]");
 			
+			if(!isDirtCapacityFull()){
+				this.dirtConsumption();
+				logger.log(Level.INFO, "Robot has dirt capacity of " + (dirtCapacityLimit - this.getDirtCapacity())  + " remaining!");
+			}
 		}
 	
 		gatherData(); //check all the sensors, add room data to stored data
@@ -156,7 +212,16 @@ public class Robot {
 			System.out.println("Robot fully recharged");
 			logger.log(Level.INFO, "Robot fully recharged!!");
 			
+			this.capacityCheck();
+			
 		}
+		// If robot power is high but dirt capacity full and charging station found 
+		else if(this.getPowerSupply() > powerlimit && this.isDirtCapacityFull() && this.getPos().equals(p)) {
+			// Ask to empty dirt so robot can continue.
+			this.capacityCheck();
+		}
+		
+		
 		//record the path
 		addToPathRecord(p);		
 		
@@ -299,28 +364,63 @@ public class Robot {
 		int tempDistance;
 		Point tempPoint;
 		
+		// determine whether robot have enough power and dirt capacity space to continue cleaning path
 		if(!(this.getPowerSupply() <= powerlimit)) {
 			
-			bestTarget=pos; //TODO replace with charging station if necessary
-			// Path to the nearest unclean tile
-			for(int y = 0; y < toExplore.getHeight(); y++) {
+			// if robot power is greater than power limit but dirt capacity full go to charging station
+			if(this.isDirtCapacityFull()) {
+				bestTarget = pos; //TODO replace with charging station if necessary
+				ArrayList<Point> stationsHolder = new ArrayList<Point>(this.getChargingStations());
 				
-				for(int x = 0; x < toExplore.getWidth(); x++) {
+				for(int i = 0; i < this.getChargingStations().size(); i++) {
+					stationsHolder.set(i, new Point(stationsHolder.get(i).x,  stationsHolder.get(i).y, this.getPos()));
+				}
+				
+				tempPoint = new ArrayList<Point>(this.getClosestChargingStation(stationsHolder, 1)).get(0);
+				
+				// Path to the nearest charging station
+				for(int y = 0; y < toExplore.getHeight(); y++) {
 					
-					tempPoint = new Point(x,y);
-					if(getKnown().hasDirtAt(tempPoint) && getPath(pos,tempPoint).size()>0) {
-						//tempDistance = distance(tempPoint, pos);
-						tempDistance = getPath(pos,tempPoint).size(); //TODO replace with fuel
+					for(int x = 0; x < toExplore.getWidth(); x++) {				
 						
-						if (bestDistance>tempDistance) {
-							bestDistance = tempDistance;
-							bestTarget = tempPoint;
+						if(getPath(pos, tempPoint).size()>0) {
+							//tempDistance = distance(tempPoint, pos);
+							tempDistance = getPath(pos,tempPoint).size(); //TODO replace with fuel
+							
+							if (bestDistance>tempDistance) {
+								bestDistance = tempDistance;
+								bestTarget = tempPoint;
+							}
 						}
 					}
 				}
+				
 			}
+			// if robot have enough power and dirt capacity space to continue cleaning path
+			else{
 			
+				bestTarget=pos; //TODO replace with charging station if necessary
+				// Path to the nearest unclean tile
+				for(int y = 0; y < toExplore.getHeight(); y++) {
+					
+					for(int x = 0; x < toExplore.getWidth(); x++) {
+						
+						tempPoint = new Point(x,y);
+						if(getKnown().hasDirtAt(tempPoint) && getPath(pos,tempPoint).size()>0) {
+							//tempDistance = distance(tempPoint, pos);
+							tempDistance = getPath(pos,tempPoint).size(); //TODO replace with fuel
+							
+							if (bestDistance>tempDistance) {
+								bestDistance = tempDistance;
+								bestTarget = tempPoint;
+							}
+						}
+					}
+				}	
+			}
+					
 		}
+
 		else {
 			bestTarget = pos; //TODO replace with charging station if necessary
 			ArrayList<Point> stationsHolder = new ArrayList<Point>(this.getChargingStations());
@@ -346,7 +446,8 @@ public class Robot {
 						}
 					}
 				}
-			}
+			}	
+	
 		}
 		
 		return bestTarget;
