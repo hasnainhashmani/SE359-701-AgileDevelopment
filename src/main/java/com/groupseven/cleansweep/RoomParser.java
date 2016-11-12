@@ -29,12 +29,13 @@ public class RoomParser {
 		return new Tile(carpet, dirt, obstacle);
 	}
 	
-	public static int intsToWall(int[] is){
-		if (is[0]==0) 	return Wall.WALL_WALL;
-		if (is[0]==0x55) return Wall.DOOR_CLOSED;
-		if (is[0]==0xAA) return Wall.DOOR_OPEN;
-		if (is[0]==0xFF) return Wall.WALL_NONE; //TODO add changing door
-		return 0;
+	public static Wall intsToWall(int[] is){
+		if (is[0]==0) 	return new Wall(Wall.WALL_WALL);
+		if (is[0]==0x55) return new Wall(Wall.DOOR_CLOSED);
+		if (is[0]==0xAA) return new Wall(Wall.DOOR_OPEN);
+		if (is[0]==0xFF) return new Wall(Wall.WALL_NONE);
+		if (is[0]<0x55) return new Wall(true, is[0]);
+		return new Wall(Wall.WALL_NONE);
 	}
 	
 	public static Room parseFile(String filename) throws IOException {
@@ -68,20 +69,14 @@ public class RoomParser {
 					}
 					
 					if (y%2==0 && (x)%2==1){ //horiz wall
-						if(intsToWall(pixel)==Wall.DOOR_CLOSED || intsToWall(pixel)==Wall.DOOR_OPEN){
-							r.addRotatingDoor(new Point(x/2, y/2), Room.DIR_N, false, 1);
-						}
-						else r.addWall(new Point(x/2, y/2), Room.DIR_N, intsToWall(pixel));
+						r.addWall(new Point(x/2, y/2), Room.DIR_N, intsToWall(pixel));
 					} else if (y%2==1 && (x)%2==1){ //tile
 						r.addTile(new Point(x/2,y/2),intsToTile(pixel));
 						if (pixel[2]==1){ //handle objects (blue channel) here
 							r.setStartingPos(new Point(x/2,y/2));
 						}
 					} else if (y%2==1){ //vert wall
-						if(intsToWall(pixel)==Wall.DOOR_CLOSED || intsToWall(pixel)==Wall.DOOR_OPEN){
-							r.addRotatingDoor(new Point(x/2, y/2), Room.DIR_W, true, 1);
-						}
-						else r.addWall(new Point(x/2, y/2), Room.DIR_W, intsToWall(pixel));
+						r.addWall(new Point(x/2, y/2), Room.DIR_W, intsToWall(pixel));
 					}
 					
 				

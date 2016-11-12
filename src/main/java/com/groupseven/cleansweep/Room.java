@@ -80,6 +80,20 @@ public class Room {
 		startingPos = p;
 	}
 	
+	public void addWall(Point p, int direction, Wall w){
+		int tempX=p.x;
+		int tempY=p.y;
+		if (direction==DIR_N){
+			walls.get(tempY*2).set(tempX,w);
+		} else if (direction==DIR_S) {
+			walls.get((tempY*2)+2).set(tempX,w);
+		} else if (direction==DIR_W){
+			walls.get((tempY*2)+1).set(tempX,w);
+		} else{
+			walls.get((tempY*2)+1).set(tempX+1,w);
+		}
+	}
+	
 	public void addWall(Point p, int direction, int wType){
 		//TODO error handle
 		int tempX=p.x;
@@ -109,6 +123,7 @@ public class Room {
 			walls.get((tempY*2)+1).set(tempX+1,new Wall(openAtStart,changeTime));
 		}
 	}
+	
 	
 	public String toString(){
 		//simple output
