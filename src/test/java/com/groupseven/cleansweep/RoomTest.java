@@ -58,11 +58,24 @@ public class RoomTest {
 		newRoom.addWall(temp1, 3, 1);
 		//add wall east
 		newRoom.addWall(temp2, 2, 2);
-		newRoom.toString();
+		
 		int[] sides = new int[4];
 		sides = newRoom.wallsSurrounding(temp1);
 	    //should be value 1 in sides[3]: south direction there is a wall
 		assertEquals(1, sides[3]);
+		newRoom.addRotatingDoor(temp1, 1, true, 3);
+		newRoom.addRotatingDoor(temp1, 2, true, 3);
+		newRoom.addRotatingDoor(temp1, 3, false, 2);
+		newRoom.addRotatingDoor(temp1, 0, false, 1);
+		newRoom.roomStep();
+		//add a charging station on temp2
+		newRoom.addChargingStation(temp2);
+		ChargingStation cs = newRoom.getChargingStation(temp2);
+		Tile tile = cs.getStation();
+		//there is no charging station on temp2, retun null
+		ChargingStation nullcs = newRoom.getChargingStation(temp1);
+		assertTrue(newRoom.chargingStationExist(temp2));
+		newRoom.toString();	
 	}
 	
 	
