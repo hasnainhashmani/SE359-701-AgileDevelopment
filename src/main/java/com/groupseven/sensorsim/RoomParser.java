@@ -2,9 +2,7 @@ package com.groupseven.sensorsim;
 
 import java.io.*;
 
-import com.groupseven.cleansweeplib.Room;
-import com.groupseven.cleansweeplib.Tile;
-import com.groupseven.cleansweeplib.Wall;
+import com.groupseven.cleansweeplib.*;
 
 import java.awt.Point;
 
@@ -19,7 +17,7 @@ public class RoomParser {
 	}
 	
 	public static Tile intsToTile(int[] is){
-		//from a pixel, return a Tile based on red and green channel
+		//from a pixel, return a Tile based on red, green, blue channel
 		int obstacle, carpet, dirt;
 		obstacle=Tile.OBSTACLE_NONE;
 		carpet=Tile.CARPET_BARE;
@@ -30,6 +28,13 @@ public class RoomParser {
 		
 		if (is[1]<0x65) dirt=(int) is[1];
 		else dirt=0;
+		
+		if (is.length>2){
+		if (is[2]==2 || is[2]==3){ //charging station
+			Tile t = new Tile(carpet,0,Tile.OBSTACLE_NONE);
+			t.setChargingStation(new ChargingStation());
+			return t;
+		}}
 		
 		return new Tile(carpet, dirt, obstacle);
 	}
@@ -77,7 +82,7 @@ public class RoomParser {
 						r.addWall(new Point(x/2, y/2), Room.DIR_N, intsToWall(pixel));
 					} else if (y%2==1 && (x)%2==1){ //tile
 						r.addTile(new Point(x/2,y/2),intsToTile(pixel));
-						if (pixel[2]==1){ //handle objects (blue channel) here
+						if (pixel[2]==1 || pixel[2]==3){ //handle objects (blue channel) here
 							r.setStartingPos(new Point(x/2,y/2));
 						}
 					} else if (y%2==1){ //vert wall

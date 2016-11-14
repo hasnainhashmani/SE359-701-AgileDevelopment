@@ -5,7 +5,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Scanner;
 import java.util.logging.Level;
 
 import com.groupseven.cleansweeplib.*;
@@ -30,7 +29,7 @@ public class Robot {
 	private double power = 100.00;
 	
 	// power limit to start searching for charging station
-	private final int powerlimit = 20; //TODO change?
+	private final int powerlimit = 20;
 	
 	// pathRecord is used to record the path of cleansweep
 	private ArrayList<Point> pathRecord;
@@ -40,7 +39,7 @@ public class Robot {
 	
 	//
 	private int dirtCapacity = 0;
-	private final int dirtCapacityLimit = 20; //TODO change to 50
+	private final int dirtCapacityLimit = 50;
 	private boolean atChargingStation;
 	
 	public Robot(SensorSim toExplore){
@@ -48,6 +47,15 @@ public class Robot {
 		this.setPos(toExplore.getStartingPosition());
 		setKnown(new Room(toExplore.getWidth(), toExplore.getHeight()));
 		getKnown().setStartingPos(pos);
+		
+		for (int y = 0; y<toExplore.getHeight(); y++){ //clear out walls so Robot doesn't try to move across walls we haven't seen
+			for (int x = 0; x<toExplore.getWidth(); x++){
+				known.addWall(new Point(x,y), Room.DIR_N, Wall.WALL_UNKNOWN);
+				known.addWall(new Point(x,y), Room.DIR_W, Wall.WALL_UNKNOWN);
+			}
+			known.addWall(new Point(toExplore.getWidth()-1,y), Room.DIR_E, Wall.WALL_UNKNOWN);
+		}
+		
 		this.toExplore=toExplore;
 		logger = new CleansweepLog();
 		logger.setLevel(Level.ALL);
@@ -159,29 +167,6 @@ public class Robot {
 	public void emptyCleansweep() {
 		this.setDirtCapacity(0);
 	}
-	
-//	private void capacityCheck() { //TODO make this a gui function
-//		@SuppressWarnings("resource")
-//		Scanner input = new Scanner(System.in);
-//		String ans;
-//		try {
-//			if(isDirtCapacityFull()) {
-//				
-//				do {
-//					System.out.print("Robot capcity full! Empty robot Yes or No: ");					
-//					ans = input.next();		
-//					System.out.println();
-//				}
-//				while(!ans.equalsIgnoreCase("yes"));
-//				
-//				this.setDirtCapacity(0);			
-//				System.out.println("Press Step to continue with robot!");
-//			}
-//		}
-//		catch(Throwable e) {
-//			this.capacityCheck();
-//		}
-//	}
 
 	public void step(){
 		//move one step in the simulation
@@ -243,7 +228,7 @@ public class Robot {
 		// if power is 20 units or less log re-charge warning
 		if(this.getPowerSupply() <= powerlimit) {
 			logger.log(Level.WARNING, "Cleansweep is running low on power, need to be recharged!");
-			logger.log(Level.WARNING, "Searching for charging station at position: [" + p.x + ", " + p.y +"]");
+			//logger.log(Level.WARNING, "Searching for charging station at position: [" + p.x + ", " + p.y +"]");
 		}
 		
 		this.setPos(new Point(next.x, next.y)); //update stored position
@@ -266,6 +251,7 @@ public class Robot {
 	private void gatherData(){
 		//gather sensor data
 		//detect walls surrounding robot
+		//TODO fix robot trying to go through walls it hasn't had a chance to see yet (don't rely on that!)
 		ArrayList<Point> visible = new ArrayList<Point>();
 		visible.add(new Point(pos.x,pos.y));
 		int[] surrounded = toExplore.wallsSurrounding();

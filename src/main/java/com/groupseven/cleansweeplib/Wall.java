@@ -7,12 +7,19 @@ public class Wall {
 	public static final int DOOR_CLOSED = 2; //permanent
 	public static final int DOOR_OPEN = 3; //permanent
 	
+	public static final int WALL_UNKNOWN = -1;
+	
 	private static final int DOOR_CHANGING=4;
 
 	private int wallType;
 	private boolean canPass; //for doors of changing state, currently open/closed (true=open)
 	private int timer; //for doors of changing state, which step currently on
 	private int changeTime; //for doors of changing state, how many steps before closing/opening (can be overridden)
+	
+	public Wall(){
+		this.wallType = Wall.WALL_UNKNOWN;
+		this.canPass=false;
+	}
 	
 	public Wall(int type){
 		if (type==Wall.DOOR_CHANGING) throw new IllegalArgumentException("Use the other constructor");

@@ -19,6 +19,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.StrokeType;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
@@ -52,7 +53,7 @@ public class GridLayout extends Application{
 		root = new AnchorPane();	
 		
 		room = RoomParser.parseFile(filename);
-		room.addChargingStation(new Point(4,6));//TODO implement through roomparser
+		//room.addChargingStation(new Point(4,6));//TODO implement through roomparser
 		
 		//drawMap();
 		robot = new Robot(new SensorSim(room));
@@ -179,6 +180,7 @@ public class GridLayout extends Application{
 					rect.setFill(colors[0]);
 					rect.setStroke(Color.rgb(50,50,50));
 				} else {
+
 					if(robot.getKnown().floorIsPlaceholder(p)){
 						rect.setFill(colors[room.getFloorTypeAt(p)+1]); //floor tiles
 						rect.setStroke(colors[room.getFloorTypeAt(p)+1].deriveColor(1.0, 1.0, 0.7, 1.0));
@@ -186,6 +188,11 @@ public class GridLayout extends Application{
 					else{
 					rect.setFill(colors[room.getFloorTypeAt(p)+1].deriveColor(60.0, 1.0, 1.0, 1.0)); //floor tiles
 					rect.setStroke(colors[room.getFloorTypeAt(p)+1].deriveColor(60.0, 1.0, 0.7, 1.0));
+					}
+					if (room.chargingStationExist(p)){
+						rect.setStrokeType(StrokeType.INSIDE);
+						rect.setStrokeWidth(5.0);
+						rect.setStroke(Color.rgb(50,80,250));
 					}
 				}				
 				

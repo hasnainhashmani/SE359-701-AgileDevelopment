@@ -19,14 +19,12 @@ public class Room {
 	private int h;
 	
 	private Point startingPos;
-	
-	private HashMap<Point, ChargingStation> roomChargingStations;
+
 	
 	
 	public Room(int width, int height){
 		this.w=width;
 		this.h=height;
-		roomChargingStations = new HashMap<Point, ChargingStation>();
 		this.startingPos=new Point(0,0);
 		floor = new ArrayList<List<Tile>>();
 		walls = new ArrayList<List<Wall>>();
@@ -227,21 +225,20 @@ public class Room {
 	// Added Charging Station to room.
 	public void addChargingStation(Point p) {
 		ChargingStation cs = new ChargingStation();
-		floor.get(p.x).get(p.y).setChargingStation(cs);		
-		this.roomChargingStations.put(p, cs);
+		floor.get(p.y).get(p.x).setChargingStation(cs);	
 	}
 	
 	public ChargingStation getChargingStation(Point p){
 		
-		if(this.roomChargingStations.containsKey(p)){
-			return this.roomChargingStations.get(p);
+		if(this.floor.get(p.y).get(p.x).isChargingStation()){
+			return this.floor.get(p.y).get(p.x).getChargingStation();
 		}
 		else
 			return null;
 	}
 	
 	public boolean chargingStationExist(Point p) {
-		if(this.floor.get(p.x).get(p.y).isChargingStation()) {
+		if(this.floor.get(p.y).get(p.x).isChargingStation()) {
 			return true;			
 		}	
 		
