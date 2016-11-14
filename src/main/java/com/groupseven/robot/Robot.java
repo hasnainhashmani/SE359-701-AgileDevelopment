@@ -185,10 +185,10 @@ public class Robot {
 		//(e.g. press spacebar, click a button that says next, or once a second if we 'play' the simulation)
 		//TODO save steps
 		
-		if (toExplore.hasDirtAt(this.getPos())) { //clean at the current position instead of moving
-			toExplore.clean(this.getPos());
+		if (toExplore.hasDirtHere()) { //clean at the current position instead of moving
+			toExplore.clean();
 			
-			if(!toExplore.hasDirtAt(this.getPos())){
+			if(!toExplore.hasDirtHere()){
 				getKnown().clean(this.getPos());
 			}
 			
@@ -242,6 +242,7 @@ public class Robot {
 		}
 		
 		this.setPos(new Point(next.x, next.y)); //update stored position
+		toExplore.move(pos);
 		gatherData(); 
 		//System.out.print(known); //This is handled by gui
 	}
@@ -249,7 +250,7 @@ public class Robot {
 	public void forceMove(Point p){
 		//This method allows someone in the GUI to move this robot's position arbitrarily (e.g. with arrow keys)
 		//WARNING: verify that you're not going through walls gui-side. Also this method might be deprecated next iteration.
-		if (getKnown().hasDirtAt(pos) && !toExplore.hasDirtAt(pos)){
+		if (getKnown().hasDirtAt(pos) && !toExplore.hasDirtHere()){
 			getKnown().clean(pos);
 		}
 		
@@ -262,7 +263,7 @@ public class Robot {
 		//detect walls surrounding robot
 		ArrayList<Point> visible = new ArrayList<Point>();
 		visible.add(new Point(pos.x,pos.y));
-		int[] surrounded = toExplore.wallsSurrounding(pos);
+		int[] surrounded = toExplore.wallsSurrounding();
 		int wall=0;
 		
 		for(int w = 0; w < 4; w++) {
@@ -332,6 +333,8 @@ public class Robot {
 		//Returns the best point to travel to. Usually the nearest uncleaned tile
 		//TODO prioritize finishing a room before moving on
 		//If we have to, go to the charging station. Otherwise, find the nearest uncleaned block. 
+		//TODO go back to charging station if done with everything
+		//TODO make sure blocked paths handled
 		
 		//If dirt's full...
 		if(this.isDirtCapacityFull()) return this.getClosestChargingStation(); //go to nearest charging station and wait to be emptied

@@ -198,21 +198,22 @@ public class Room {
 	}
 	
 	public boolean hasDirtAt(Point p){
-		//TODO error handle
+		if (p.x<0 || p.x>this.getWidth() || p.y<0 || p.y>this.getHeight()) return false;
 		return floor.get(p.y).get(p.x).hasDirt();
 	}
 	
 	public void clean(Point p){
-		//TODO error handle
+		if (p.x<0 || p.x>this.getWidth() || p.y<0 || p.y>this.getHeight()) return;
 		floor.get(p.y).get(p.x).cleanTile();
 	}
 	
 	public int getFloorTypeAt(Point p){
-		//TODO error handle
+		if (p.x<0 || p.x>this.getWidth() || p.y<0 || p.y>this.getHeight()) return 0;
 		return floor.get(p.y).get(p.x).getCarpetType();
 	}
 	
 	public int floorIsObstacle(Point p){
+		if (p.x<0 || p.x>this.getWidth() || p.y<0 || p.y>this.getHeight()) return Tile.OBSTACLE_BLOCK; //can't go outside room
 		return floor.get(p.y).get(p.x).getObstacleType();
 	}
 	
