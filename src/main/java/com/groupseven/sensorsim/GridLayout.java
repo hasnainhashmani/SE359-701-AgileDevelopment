@@ -31,7 +31,7 @@ import java.awt.Point;
 public class GridLayout extends Application{ 
 	
 	int scale = 40;
-	String filename = "rooms/samplefloor2.bmp"; //TODO make this command line option or something
+	static String filename = "rooms/samplefloor2.bmp";
 	//Also try "pathingStressTest.bmp"
 	ImageView robotImg;
 	Pane root;
@@ -42,12 +42,12 @@ public class GridLayout extends Application{
 	Button btn2;
 	
 	public static void main(String[] args){
+		if (args.length>0) filename = args[0];
 		launch(args);
 	}
 	
 	@Override
 	public void start(Stage gridStage) throws Exception {
-		// TODO Auto-generated method stub
 		//Random number generator for objects
 		
 		root = new AnchorPane();	
@@ -113,11 +113,9 @@ public class GridLayout extends Application{
 	
 
 	private void startGrid() {
-		// TODO Auto-generated method stub
 		scene.setOnKeyPressed(new EventHandler<KeyEvent>(){
 
 			public void handle(KeyEvent event) {
-				// TODO Auto-generated method stub
 				Point oldP = robot.getPos();
 				switch(event.getCode()){
 				case RIGHT:
@@ -176,7 +174,7 @@ public class GridLayout extends Application{
 				Rectangle rect = new Rectangle(x*scale, y*scale, scale, scale);
 
 				//room stuff goes here
-				if(room.floorIsObstacle(p)>0){ //TODO stairs are different than obstacle
+				if(room.floorIsObstacle(p)>0){
 					rect.setFill(colors[0]);
 					rect.setStroke(Color.rgb(50,50,50));
 				} else {

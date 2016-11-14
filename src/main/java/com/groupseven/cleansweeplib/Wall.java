@@ -2,7 +2,7 @@ package com.groupseven.cleansweeplib;
 
 public class Wall {
 
-	public static final int WALL_NONE = 0; //TODO replace with enum
+	public static final int WALL_NONE = 0;
 	public static final int WALL_WALL = 1;
 	public static final int DOOR_CLOSED = 2; //permanent
 	public static final int DOOR_OPEN = 3; //permanent

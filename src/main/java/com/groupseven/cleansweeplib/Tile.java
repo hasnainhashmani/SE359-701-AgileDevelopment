@@ -12,6 +12,7 @@ public class Tile {
 	public static final int OBSTACLE_STAIRS = 2;
 	
 	private ChargingStation chargingStation;
+	private boolean hasChargingStation;
 	
 	private int carpet;
 	private int dirtLevel;
@@ -24,6 +25,7 @@ public class Tile {
 		this.obstacleType=-1;
 		this.placeholder=true;
 		this.setChargingStation(chargingStation);
+		this.hasChargingStation=false;
 	}
 	
 	public Tile(int carpetType, int dirt, int obstacle){
@@ -32,12 +34,12 @@ public class Tile {
 		this.obstacleType=obstacle;
 		this.placeholder=false;
 		this.setChargingStation(chargingStation);
+		this.hasChargingStation=false;
 	}
 	
 	public boolean isPlaceholder(){return placeholder;}
 	
 	public void cleanTile(){
-		//if (dirtLevel<=0) throw new Exception(); //TODO exception type
 		dirtLevel--;
 	}
 	
@@ -51,10 +53,11 @@ public class Tile {
 
 	public void setChargingStation(ChargingStation cs) {
 		this.chargingStation = cs;
+		this.hasChargingStation=true;
 	}
 	
 	public boolean isChargingStation() {
-		return this.getChargingStation() != null; //TODO isn't this bad?
+		return this.hasChargingStation; 
 	}
 	
 }

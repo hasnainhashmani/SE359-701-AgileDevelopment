@@ -14,12 +14,88 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
+	
+	<profiles>
+      <profile>
+        <id>everything</id>
+        <build>
+          <plugins>
+            <plugin>
+              <artifactId>maven-jar-plugin</artifactId>
+              <configuration>
+                <classifier>everything</classifier>
+                <includes>
+                  <include>**/*</include>
+                </includes>
+              </configuration>
+            </plugin>
+          </plugins>
+        </build>
+      </profile>
+      <profile>
+        <id>robot</id>
+        <build>
+          <plugins>
+            <plugin>
+              <artifactId>maven-jar-plugin</artifactId>
+              <configuration>
+              	<archive>
+						<manifest>
+							<addClasspath>true</addClasspath>
+							<mainClass>com.groupseven.sensorsim.GridLayout</mainClass>
+						</manifest>
+					</archive>
+                <classifier>robot</classifier>
+              	<excludes>
+                  <exclude>**/sensorsim/</exclude>
+                </excludes>
+              </configuration>
+            </plugin>
+          </plugins>
+        </build>
+      </profile>
+      <profile>
+        <id>sensorsim</id>
+        <build>
+          <plugins>
+            <plugin>
+              <artifactId>maven-jar-plugin</artifactId>
+              <configuration>
+              	<archive>
+						<manifest>
+							<addClasspath>true</addClasspath>
+							<mainClass>com.groupseven.sensorsim.GridLayout</mainClass>
+						</manifest>
+				</archive>
+                <classifier>sensorsim</classifier>
+              	<excludes>
+                  <exclude>**/robot/</exclude>
+                </excludes>
+              </configuration>
+            </plugin>
+          </plugins>
+        </build>
+      </profile>
+    </profiles>
 
 	<build>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-dependency-plugin</artifactId>
+				<configuration>
+					<archive>
+						<manifest>
+							<addClasspath>true</addClasspath>
+							<mainClass>com.groupseven.sensorsim.GridLayout</mainClass>
+						</manifest>
+					</archive>
+				</configuration>
+			</plugin>
+			
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
 				<configuration>
 					<archive>
 						<manifest>

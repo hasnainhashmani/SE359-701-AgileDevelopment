@@ -14,7 +14,7 @@ import java.awt.Point;
 
 public class Robot {
 	
-	private Room known; //TODO methods to access this? Right now GUI directly accesses it, possible unsafe
+	private Room known;
 	private SensorSim toExplore;	
 	private Point pos;
 	
@@ -107,7 +107,8 @@ public class Robot {
 		if(this.pathRecord.isEmpty()) {
 			System.out.println("No path recorded yet!");
 			logger.log(Level.INFO, "No path recorded yet!");
-		}		
+		}
+		//TODO do this
 	}
 	
 	/**
@@ -153,9 +154,9 @@ public class Robot {
 	}
 	
 	private void dirtConsumption() {
-		//TODO add exception/error handling
-		if(this.getDirtCapacity() == this.dirtCapacityLimit)
+		if(this.getDirtCapacity() == this.dirtCapacityLimit){
 			logger.log(Level.WARNING, "Dirt Capcity Full!!");
+			throw new RuntimeException("Dirt Capacity is full, but Robot tried to add more dirt");}
 		else
 			this.setDirtCapacity(this.getDirtCapacity() + 1);
 	}
@@ -249,7 +250,6 @@ public class Robot {
 	private void gatherData(){
 		//gather sensor data
 		//detect walls surrounding robot
-		//TODO fix robot trying to go through walls it hasn't had a chance to see yet (don't rely on that!)
 		ArrayList<Point> visible = new ArrayList<Point>();
 		visible.add(new Point(pos.x,pos.y));
 		int[] surrounded = toExplore.wallsSurrounding();
@@ -327,19 +327,18 @@ public class Robot {
 		//If dirt's full...
 		if(this.isDirtCapacityFull()) return this.getClosestChargingStation(); //go to nearest charging station and wait to be emptied
 		//Otherwise assume full power and find best place to go
-		int bestDistance=Integer.MAX_VALUE;
+		double bestDistance=Integer.MAX_VALUE;
 		Point bestTarget=this.getClosestChargingStation();
 		ArrayList<Point> bestPath = new ArrayList<Point>();
-		int tempDistance;
+		double tempDistance;
 		Point tempPoint;
 		// Path to the nearest unclean tile
-		//TODO replace with fuel
 		for(int y = 0; y < toExplore.getHeight(); y++) {
 			for(int x = 0; x < toExplore.getWidth(); x++) {
 				tempPoint = new Point(x,y);
 				if(getKnown().hasDirtAt(tempPoint) && getPath(pos,tempPoint).size()>0) {
 					//tempDistance = distance(tempPoint, pos);
-					tempDistance = getPath(pos,tempPoint).size(); //TODO replace with fuel
+					tempDistance = getPathCost(getPath(pos,tempPoint));
 					if (bestDistance>tempDistance) {
 						bestDistance = tempDistance;
 						bestTarget = tempPoint;
@@ -364,11 +363,9 @@ public class Robot {
 	}
 	
 	public Point getClosestChargingStation(){
-		//Returns the charging station nearest to the robot's current position
-		//TODO handle no charging stations known
-			
+		//Returns the charging station nearest to the robot's current position, or the robot's current position if none exist
 		double bestDistance = Integer.MAX_VALUE;
-		Point bestTarget = new Point(0,0);
+		Point bestTarget = this.getPos();
 		for(Point p: this.getChargingStations()){
 			List<Point> testPath = getPath(this.getPos(),p);
 			if (getPathCost(testPath)<bestDistance){
@@ -425,7 +422,6 @@ public class Robot {
 	
 	public List<Point> getPath(Point from, Point to){
 		//pathfinding. returns a list of points, in order, that gets from 'from' to 'to. 
-		//TODO handle fuel and movement costs in travel cost
 		if(from.equals(to)) 
 			return new ArrayList<Point>();
 		if(adjacent(from).contains(to)) {
@@ -443,7 +439,7 @@ public class Robot {
 		HashMap<Point, Integer> travelCost = new HashMap<Point, Integer>();
 		travelCost.put(from, 0);
 		
-		HashMap<Point, Integer> heurCost = new HashMap<Point, Integer>(); //TODO heuristic that includes fuel cost
+		HashMap<Point, Integer> heurCost = new HashMap<Point, Integer>();
 		heurCost.put(from, distance(from,to));
 		
 		Point temp;
@@ -451,11 +447,9 @@ public class Robot {
 		Point bestPTemp = new Point(0,0);
 		
 		while (toCheck.size()>0) {
-			
 			bestTemp=Integer.MAX_VALUE;
 			
 			for(Point t: toCheck){
-				
 				if(travelCost.get(t)<bestTemp){
 					bestTemp=travelCost.get(t);
 					bestPTemp=t;
@@ -468,12 +462,11 @@ public class Robot {
 			int tCost;
 			
 			for(Point a:adjacent(temp)){
-				
 				if(checked.contains(a)) {
 					continue; //already checked, skip
 				}
 				
-				tCost = travelCost.get(temp)+1; //TODO fuel cost
+				tCost = travelCost.get(temp)+1;
 				if(!toCheck.contains(a)) 
 					toCheck.add(a);
 				else if (tCost>travelCost.get(a))

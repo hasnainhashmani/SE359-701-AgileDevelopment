@@ -7,7 +7,7 @@ import java.awt.Point;
 
 public class Room {
 	
-	public static final int DIR_N = 0; //TODO replace with enum
+	public static final int DIR_N = 0;
 	public static final int DIR_W = 1;
 	public static final int DIR_E = 2;
 	public static final int DIR_S = 3;
@@ -69,7 +69,7 @@ public class Room {
 
 	public Point getStartingPosition(){
 		/*returns the starting position of the robot*/
-		return startingPos; //TODO fix unsafe
+		return startingPos;
 	}
 	
 	public void setStartingPos(Point p){
@@ -121,10 +121,20 @@ public class Room {
 		}
 	}
 	
+	private String wallToString(int y, int x,String s1,String s2){
+		String s = "";
+		if (walls.get(y).get(x).getStatus()>0){
+			s=s1; //TODO doors
+		}
+		else{
+			s=s2;
+		}
+		return s;
+	}
+	
 	
 	public String toString(){
 		//simple output
-		//TODO make this code less crap
 		String s = "";
 		for(int y = 0; y<floor.size(); y++){
 			List<Tile> row = floor.get(y);
@@ -132,41 +142,20 @@ public class Room {
 			for(int x=0; x<row.size(); x++){
 				if (new Point(x,y).equals(this.getStartingPosition())){
 					s+="P";
-					if (walls.get(y*2).get(x).getStatus()>0){
-						s+="_"; //TODO doors
-					}
-					else{
-						s+=".";
-					}
+					s+=wallToString(y*2,x,"_",".");
 				}
-				else{if (walls.get(y*2).get(x).getStatus()>0){
-					s+=" _"; //TODO doors
-				}
-				else{
-					s+=" .";
-				}}
+				else s+=wallToString(y*2,x," _"," .");
 			}
 			s+="\n";
 			for(int x=0; x<row.size(); x++){
-				if (walls.get((y*2)+1).get(x).getStatus()>0){
-					s+="|"; //TODO doors
-				} else{
-					s+=".";
-				}
-				s += row.get(x).getCarpetType()+1;
+				s+=wallToString(y*2+1,x,"|",".");
+				s+= row.get(x).getCarpetType()+1;
 			}
-			if (walls.get((y*2)+1).get(row.size()).getStatus()>0){
-				s+="|"; //TODO doors
-			} else{
-				s+=".";
-			}
+			s+=wallToString(y*2+1,row.size(),"|",".");
 			s += "\n";
 		}
 		for(int x=0; x<w+1; x++){
-			if (walls.get(h*2).get(x).getStatus()>0){
-				s+=" _"; //TODO doors
-			}
-			else{s+=" .";}
+			s+=wallToString(h*2,x,"_",".");
 		}
 		s+="\n";
 		return s;
