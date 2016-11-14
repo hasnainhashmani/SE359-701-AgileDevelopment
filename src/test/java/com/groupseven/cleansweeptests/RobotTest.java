@@ -1,4 +1,4 @@
-package com.groupseven.cleansweep;
+package com.groupseven.cleansweeptests;
 
 import static org.junit.Assert.*;
 
@@ -9,17 +9,17 @@ import java.util.List;
 
 import org.junit.Test;
 
-import com.groupseven.cleansweep.Robot;
-import com.groupseven.cleansweep.Room;
-import com.groupseven.cleansweep.RoomParser;
-import com.groupseven.cleansweep.Tile;
+import com.groupseven.cleansweeplib.Room;
+import com.groupseven.cleansweeplib.Tile;
+import com.groupseven.robot.Robot;
+import com.groupseven.sensorsim.*;
 
 public class RobotTest {
 	@Test
 	public void sampleFloorTest() throws IOException {
 		String s = "rooms/samplefloor.bmp";
 		Room room = RoomParser.parseFile(s);
-		Robot robot = new Robot(room);
+		Robot robot = new Robot(new SensorSim(room));
 		robot.displayPathRecord();
 		Point start = robot.getPos();
 		robot.step();
@@ -69,7 +69,7 @@ public class RobotTest {
 		toExplore.addWall(temp1, 0, 1);
 		//add wall east
 		toExplore.addWall(temp2, 2, 2);
-		Robot newRobot = new Robot(toExplore);
+		Robot newRobot = new Robot(new SensorSim(toExplore));
 		assertTrue(toExplore.hasDirtAt(startPoint));
 		newRobot.step();//since toExplore has dirt, clean instead of moving
 		assertFalse(toExplore.hasDirtAt(startPoint)); // no dirt after step

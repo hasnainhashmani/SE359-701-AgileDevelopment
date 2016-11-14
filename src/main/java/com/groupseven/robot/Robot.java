@@ -1,20 +1,22 @@
-package com.groupseven.cleansweep;
+package com.groupseven.robot;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.PriorityQueue;
 import java.util.Scanner;
 import java.util.logging.Level;
+
+import com.groupseven.cleansweeplib.*;
+import com.groupseven.sensorsim.*;
 
 import java.awt.Point;
 
 public class Robot {
 	
 	private Room known; //TODO methods to access this? Right now GUI directly accesses it, possible unsafe
-	private Room toExplore;	
+	private SensorSim toExplore;	
 	private Point pos;
 	
 	// Logger also create a log file (log.txt) in project workspace for record keeping 
@@ -40,7 +42,7 @@ public class Robot {
 	private int dirtCapacity = 0;
 	private final int dirtCapacityLimit = 20;
 	
-	public Robot(Room toExplore){
+	public Robot(SensorSim toExplore){
 		this.setPowerSupply(powerSupply);
 		this.setPos(toExplore.getStartingPosition());
 		setKnown(new Room(toExplore.getWidth(), toExplore.getHeight()));

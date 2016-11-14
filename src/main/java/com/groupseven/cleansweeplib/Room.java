@@ -1,4 +1,4 @@
-package com.groupseven.cleansweep;
+package com.groupseven.cleansweeplib;
 
 import java.util.List;
 import java.util.ArrayList;

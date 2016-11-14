@@ -1,7 +1,11 @@
-package com.groupseven.cleansweep;
+package com.groupseven.sensorsim;
 
 
 import java.util.ArrayList;
+
+import com.groupseven.cleansweeplib.Room;
+import com.groupseven.cleansweeplib.Wall;
+import com.groupseven.robot.Robot;
 
 import javafx.application.Application;
 import javafx.event.ActionEvent;
@@ -50,7 +54,7 @@ public class GridLayout extends Application{
 		room.addChargingStation(new Point(4,6));//TODO implement through roomparser
 		
 		//drawMap();
-		robot = new Robot(room);
+		robot = new Robot(new SensorSim(room));
 		//Loading and placing our robot
 		
 

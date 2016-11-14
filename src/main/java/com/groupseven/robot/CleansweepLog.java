@@ -1,4 +1,4 @@
-package com.groupseven.cleansweep;
+package com.groupseven.robot;
 
 import java.io.File;
 import java.io.IOException;

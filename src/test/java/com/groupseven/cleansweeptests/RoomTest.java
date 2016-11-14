@@ -1,4 +1,4 @@
-package com.groupseven.cleansweep;
+package com.groupseven.cleansweeptests;
 
 import static org.junit.Assert.*;
 
@@ -8,6 +8,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Test;
+
+import com.groupseven.cleansweeplib.ChargingStation;
+import com.groupseven.cleansweeplib.Room;
+import com.groupseven.cleansweeplib.Tile;
+import com.groupseven.sensorsim.RoomParser;
 
 public class RoomTest {
 	//add a tile if existed should throw exception

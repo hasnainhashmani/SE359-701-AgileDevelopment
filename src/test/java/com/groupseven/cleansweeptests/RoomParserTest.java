@@ -1,7 +1,7 @@
 /**
  * test file for room object
  */
-package com.groupseven.cleansweep;
+package com.groupseven.cleansweeptests;
 import static org.junit.Assert.*;
 
 import java.io.File;
@@ -10,8 +10,9 @@ import java.io.IOException;
 
 import org.junit.Test;
 
-import com.groupseven.cleansweep.RoomParser;
-import com.groupseven.cleansweep.Tile;
+import com.groupseven.cleansweeplib.Tile;
+import com.groupseven.cleansweeplib.Wall;
+import com.groupseven.sensorsim.RoomParser;
 
 
 public class RoomParserTest {

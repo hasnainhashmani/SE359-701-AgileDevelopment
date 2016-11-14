@@ -1,4 +1,4 @@
-package com.groupseven.cleansweep;
+package com.groupseven.cleansweeplib;
 
 public class Wall {
 

@@ -1,6 +1,11 @@
-package com.groupseven.cleansweep;
+package com.groupseven.sensorsim;
 
 import java.io.*;
+
+import com.groupseven.cleansweeplib.Room;
+import com.groupseven.cleansweeplib.Tile;
+import com.groupseven.cleansweeplib.Wall;
+
 import java.awt.Point;
 
 public class RoomParser {

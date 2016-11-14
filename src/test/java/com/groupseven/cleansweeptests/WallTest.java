@@ -1,8 +1,10 @@
-package com.groupseven.cleansweep;
+package com.groupseven.cleansweeptests;
 
 import static org.junit.Assert.*;
 
 import org.junit.Test;
+
+import com.groupseven.cleansweeplib.Wall;
 
 public class WallTest {
 	//WALL_NONE = 0; 

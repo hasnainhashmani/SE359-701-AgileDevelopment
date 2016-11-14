@@ -1,5 +1,6 @@
-package com.groupseven.cleansweep;
+package com.groupseven.cleansweeplib;
 
+import com.groupseven.robot.Robot;
 
 public class ChargingStation {
 	

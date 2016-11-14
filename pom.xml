@@ -3,7 +3,7 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>com.groupseven.cleansweep</groupId>
+	<groupId>com.groupseven.sensorsim</groupId>
 	<artifactId>cleansweep</artifactId>
 	<version>1.0-SNAPSHOT</version>
 	<packaging>jar</packaging>
@@ -24,7 +24,7 @@
 					<archive>
 						<manifest>
 							<addClasspath>true</addClasspath>
-							<mainClass>main.java.com.groupseven.cleansweep.GridLayout</mainClass>
+							<mainClass>com.groupseven.sensorsim.GridLayout</mainClass>
 						</manifest>
 					</archive>
 				</configuration>
@@ -44,7 +44,7 @@
 					</execution>
 				</executions>
 				<configuration>
-					<mainClass>com.groupseven.cleansweep.GridLayout</mainClass>
+					<mainClass>com.groupseven.sensorsim.GridLayout</mainClass>
 				</configuration>
 			</plugin>
 
