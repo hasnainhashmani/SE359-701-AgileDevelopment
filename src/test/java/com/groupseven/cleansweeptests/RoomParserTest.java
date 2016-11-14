@@ -57,16 +57,16 @@ public class RoomParserTest {
 		is[0] = 0;//wall wall	
 		Wall walltype1 = RoomParser.intsToWall(is);
 		
-		assertSame(1, walltype1.WALL_WALL);
+		assertSame(walltype1.getStatus(), Wall.WALL_WALL);
 		is[0] = 0x55;//wall door closed
 		Wall walltype2 = RoomParser.intsToWall(is);
-		assertEquals(2, walltype2.DOOR_CLOSED);
+		assertEquals(walltype2.getStatus(), Wall.DOOR_CLOSED);
 		is[0] = 0xAA;//wall DOOR OPEN
 		Wall walltype3 = RoomParser.intsToWall(is);
-		assertEquals(3, walltype3.DOOR_OPEN);
+		assertEquals(walltype3.getStatus(), Wall.DOOR_OPEN);
 		is[0] = 0xFF;//wall none
 		Wall walltype4 = RoomParser.intsToWall(is);
-		assertEquals(0, walltype4.WALL_NONE);
+		assertEquals(walltype4.getStatus(), Wall.WALL_NONE);
 	}
 	//test create a room, not sure if should be add more detail
 	@Test

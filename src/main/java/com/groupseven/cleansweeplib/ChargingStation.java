@@ -1,7 +1,5 @@
 package com.groupseven.cleansweeplib;
 
-import com.groupseven.robot.Robot;
-
 public class ChargingStation {
 	
 	private final double charge = 100.00;
