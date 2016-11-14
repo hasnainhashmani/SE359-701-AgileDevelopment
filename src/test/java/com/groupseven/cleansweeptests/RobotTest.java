@@ -28,7 +28,6 @@ public class RobotTest {
 		Point end = robot.getPos();
 		robot.getPath(start, end);
 		assertEquals(94.0, robot.getPowerSupply(), 0.1);
-		assertEquals(2,robot.getDirtCapacity());// dirt cap is 2 
 		int i = 0;
 		while(i < 18){
 			robot.step();

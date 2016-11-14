@@ -176,21 +176,23 @@ public class Robot {
 		
 		if (toExplore.hasDirtHere()) { //clean at the current position instead of moving
 			toExplore.clean();
-			
-			if(!toExplore.hasDirtHere()){
-				getKnown().clean(this.getPos());
-			}
-			
-			return;
-		} 
-		else if (getKnown().hasDirtAt(this.getPos())) {			
-			this.getKnown().clean(this.getPos());
 			logger.log(Level.INFO, "Robot Cleaning postion: [" + this.getPos().x + ", " + this.getPos().y + "]");
 			
 			if(!isDirtCapacityFull()){
 				this.dirtConsumption(); //TODO fix these calls (should happen more often - lines 187?) ALSO this one is wrong but I'm leaving it for debug. 
 				logger.log(Level.INFO, "Robot has dirt capacity of " + (dirtCapacityLimit - this.getDirtCapacity())  + " remaining!");
 			}
+			
+			if(!toExplore.hasDirtHere()){
+				getKnown().clean(this.getPos()); //update internal representation of room
+			}
+			
+			return;
+		} 
+		else if (getKnown().hasDirtAt(this.getPos())) {			
+			this.getKnown().clean(this.getPos()); //Make sure internal representation of the room is updated
+			
+
 		}
 	
 		gatherData(); //check all the sensors, add room data to stored data
@@ -324,20 +326,18 @@ public class Robot {
 		//Returns the best point to travel to. Usually the nearest uncleaned tile
 		//TODO prioritize finishing a room before moving on
 		//If we have to, go to the charging station. Otherwise, find the nearest uncleaned block. 
-		//TODO go back to charging station if done with everything
 		//TODO make sure blocked paths handled
 		
 		//If dirt's full...
 		if(this.isDirtCapacityFull()) return this.getClosestChargingStation(); //go to nearest charging station and wait to be emptied
 		//Otherwise assume full power and find best place to go
 		int bestDistance=Integer.MAX_VALUE;
-		Point bestTarget=pos;
+		Point bestTarget=this.getClosestChargingStation();
 		ArrayList<Point> bestPath = new ArrayList<Point>();
 		int tempDistance;
 		Point tempPoint;
 		// Path to the nearest unclean tile
 		//TODO replace with fuel
-		//TODO handle everything already clean
 		for(int y = 0; y < toExplore.getHeight(); y++) {
 			for(int x = 0; x < toExplore.getWidth(); x++) {
 				tempPoint = new Point(x,y);
@@ -353,15 +353,15 @@ public class Robot {
 			}
 		}
 		
-		if (bestPath.size()==0) return pos; //if there's nowhere to go, stay here
+		if (bestPath.size()==0) return this.getClosestChargingStation(); //if there's nowhere to go, go back to the nearest charging station
 		
 		//Find out the power it would take to do that 
 		double expectedPowerCost = 0.0;
 		expectedPowerCost+=(known.getFloorTypeAt(pos)+known.getFloorTypeAt(bestPath.get(0))+2)/2.0; //TODO better 'get power at floor type at'
 		
 		//Calculate expected power cost of returning to the station after doing that 
-		expectedPowerCost+=(double) (getPath(bestPath.get(0),this.getClosestChargingStation())).size() * 2; //TODO replace with fuel (right now it's assuming low-pile)
-		
+		expectedPowerCost+= getPathCost(getPath(bestPath.get(0),this.getClosestChargingStation()))+5.0;
+
 		//if it's too far, go to the charging station
 		if (expectedPowerCost > this.powerSupply) return this.getClosestChargingStation();
 		return bestTarget;
@@ -369,15 +369,14 @@ public class Robot {
 	
 	public Point getClosestChargingStation(){
 		//Returns the charging station nearest to the robot's current position
-		//TODO replace with best station by fuel cost
 		//TODO handle no charging stations known
 			
-		int bestDistance = Integer.MAX_VALUE;
+		double bestDistance = Integer.MAX_VALUE;
 		Point bestTarget = new Point(0,0);
 		for(Point p: this.getChargingStations()){
 			List<Point> testPath = getPath(this.getPos(),p);
-			if (testPath.size()<bestDistance){
-				bestDistance = testPath.size();
+			if (getPathCost(testPath)<bestDistance){
+				bestDistance = getPathCost(testPath);
 				bestTarget = p;
 			}
 		}
@@ -502,6 +501,16 @@ public class Robot {
 		path.add(temp);
 		Collections.reverse(path);
 		return path;
+	}
+	
+	public double getPathCost(List<Point> points){
+		//Returns the estimated fuel cost of traversing this path
+		double cost = 0.0;
+		
+		for(int i=0; i<points.size()-1;i++){
+			cost+=(known.getFloorTypeAt(points.get(i)) + known.getFloorTypeAt(points.get(i+1))+2.0)/2.0;
+		}
+		return cost;
 	}
 
 
