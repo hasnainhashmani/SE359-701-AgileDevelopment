@@ -30,7 +30,7 @@ public class Robot {
 	private double power = 100.00;
 	
 	// power limit to start searching for charging station
-	private final int powerlimit = 20; //TODO change?
+	private final int powerlimit = 50; 
 	
 	// pathRecord is used to record the path of cleansweep
 	private ArrayList<Point> pathRecord;
