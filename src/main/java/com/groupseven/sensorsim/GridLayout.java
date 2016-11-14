@@ -38,6 +38,7 @@ public class GridLayout extends Application{
 	Room room;
 	Robot robot;
 	Button btn;
+	Button btn2;
 	
 	public static void main(String[] args){
 		launch(args);
@@ -76,6 +77,22 @@ public class GridLayout extends Application{
 			}
 			
 		});
+		
+		btn2 = new Button();
+		btn2.setText("Empty");
+		btn2.setScaleX(1.5);
+		btn2.setScaleY(1.5);
+		AnchorPane.setBottomAnchor(btn2, 75.0);
+		AnchorPane.setRightAnchor(btn2, 290.0);
+		btn2.setOnAction(new EventHandler<ActionEvent>(){
+			 
+			public void handle(ActionEvent event) {
+				robot.emptyCleansweep();
+				drawMap();
+			}
+			
+		});
+		
 		drawMap();
 		//root.getChildren().add(btn);
 		scene = new Scene(root, 625,700);
@@ -266,7 +283,10 @@ public class GridLayout extends Application{
 			}
 		}
 		loadrobotImage();
+		if (robot.isAtChargingStation()){btn2.setDisable(false);}
+		else btn2.setDisable(true);
 		root.getChildren().add(btn);
+		root.getChildren().add(btn2);
 	}
 
 }

@@ -30,7 +30,7 @@ public class Robot {
 	private double power = 100.00;
 	
 	// power limit to start searching for charging station
-	private final int powerlimit = 20;
+	private final int powerlimit = 20; //TODO change?
 	
 	// pathRecord is used to record the path of cleansweep
 	private ArrayList<Point> pathRecord;
@@ -40,7 +40,8 @@ public class Robot {
 	
 	//
 	private int dirtCapacity = 0;
-	private final int dirtCapacityLimit = 20;
+	private final int dirtCapacityLimit = 20; //TODO change to 50
+	private boolean atChargingStation;
 	
 	public Robot(SensorSim toExplore){
 		this.setPowerSupply(powerSupply);
@@ -55,6 +56,7 @@ public class Robot {
 		this.setPowerSupply(power);
 		this.setDirtCapacity(dirtCapacity);
 		chargingStations = new ArrayList<Point>();		
+		atChargingStation=toExplore.chargingStationExist(this.getPos());
 	}
 	
 	/**
@@ -86,6 +88,8 @@ public class Robot {
 	public void setPowerSupply(double power){
 		powerSupply = power;
 	}
+	
+	public boolean isAtChargingStation(){return atChargingStation;}
 	
 	public void addToPathRecord(Point p) {
 		pathRecord.add(p);
@@ -156,28 +160,28 @@ public class Robot {
 		this.setDirtCapacity(0);
 	}
 	
-	private void capacityCheck() { //TODO make this a gui function
-		@SuppressWarnings("resource")
-		Scanner input = new Scanner(System.in);
-		String ans;
-		try {
-			if(isDirtCapacityFull()) {
-				
-				do {
-					System.out.print("Robot capcity full! Empty robot Yes or No: ");					
-					ans = input.next();		
-					System.out.println();
-				}
-				while(!ans.equalsIgnoreCase("yes"));
-				
-				this.setDirtCapacity(0);			
-				System.out.println("Press Step to continue with robot!");
-			}
-		}
-		catch(Throwable e) {
-			this.capacityCheck();
-		}
-	}
+//	private void capacityCheck() { //TODO make this a gui function
+//		@SuppressWarnings("resource")
+//		Scanner input = new Scanner(System.in);
+//		String ans;
+//		try {
+//			if(isDirtCapacityFull()) {
+//				
+//				do {
+//					System.out.print("Robot capcity full! Empty robot Yes or No: ");					
+//					ans = input.next();		
+//					System.out.println();
+//				}
+//				while(!ans.equalsIgnoreCase("yes"));
+//				
+//				this.setDirtCapacity(0);			
+//				System.out.println("Press Step to continue with robot!");
+//			}
+//		}
+//		catch(Throwable e) {
+//			this.capacityCheck();
+//		}
+//	}
 
 	public void step(){
 		//move one step in the simulation
@@ -208,15 +212,16 @@ public class Robot {
 		Point p = getObjective(); //find the next place to clean (or, the charging station if we're out of fuel/dirt capacity)
 		
 		//If we intentionally went to the power station (as a goal), recharge
+		this.atChargingStation =false;
 		if(this.known.chargingStationExist(this.getPos()) && this.getPos().equals(p)) {
-
+			this.atChargingStation=true;
 			this.known.getChargingStation(p).recharge(this);
 			System.out.println("Robot recharging");
 			logger.log(Level.INFO, "Robot recharging!!");
 			System.out.println("Robot fully recharged");
 			logger.log(Level.INFO, "Robot fully recharged!!");
 			
-			this.capacityCheck();
+			//this.capacityCheck();
 			
 		}
 		
