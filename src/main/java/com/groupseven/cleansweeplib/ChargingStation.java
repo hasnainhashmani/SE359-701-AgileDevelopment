@@ -10,10 +10,6 @@ public class ChargingStation {
 	public ChargingStation(){		
 		this.setStationLocation(stationLocation);
 	}
-	
-	public void recharge(Robot robot) {
-		robot.rechargePowerSupply(charge);
-	}
 
 	public void setStationLocation(Tile t) {
 		stationLocation = t;

@@ -31,7 +31,7 @@ import java.awt.Point;
 public class GridLayout extends Application{ 
 	
 	int scale = 40;
-	String filename = "rooms/samplefloor.bmp"; //TODO make this command line option or something
+	String filename = "rooms/samplefloor2.bmp"; //TODO make this command line option or something
 	//Also try "pathingStressTest.bmp"
 	ImageView robotImg;
 	Pane root;

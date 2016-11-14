@@ -202,13 +202,9 @@ public class Robot {
 		this.atChargingStation =false;
 		if(this.known.chargingStationExist(this.getPos()) && this.getPos().equals(p)) {
 			this.atChargingStation=true;
-			this.known.getChargingStation(p).recharge(this);
-			System.out.println("Robot recharging");
-			logger.log(Level.INFO, "Robot recharging!!");
+			this.rechargePowerSupply(100.0);
 			System.out.println("Robot fully recharged");
 			logger.log(Level.INFO, "Robot fully recharged!!");
-			
-			//this.capacityCheck();
 			
 		}
 		
@@ -360,7 +356,7 @@ public class Robot {
 		expectedPowerCost+=(known.getFloorTypeAt(pos)+known.getFloorTypeAt(bestPath.get(0))+2)/2.0; //TODO better 'get power at floor type at'
 		
 		//Calculate expected power cost of returning to the station after doing that 
-		expectedPowerCost+= getPathCost(getPath(bestPath.get(0),this.getClosestChargingStation()))+5.0;
+		expectedPowerCost+= getPathCost(getPath(bestPath.get(0),this.getClosestChargingStation()))+6.0;
 
 		//if it's too far, go to the charging station
 		if (expectedPowerCost > this.powerSupply) return this.getClosestChargingStation();
