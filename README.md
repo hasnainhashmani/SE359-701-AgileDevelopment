@@ -1,5 +1,7 @@
 # Repository for SE 359, Agile Development Group 7 (CleanSweep)
 
+This is a vacuum control system made in 10 weeks using agile processes for SE 359. 
+
 There are three packages:
 com.groupseven.robot is the Control System. Its methods (for gathering sensor data and moving) can be accessed directly, mainly through the step() and gatherdata() function. Given accurate sensor data (from a SensorSim or, in a real life environment, the hardware sensors), it should function normally, exploring and cleaning the entire floor. 
 
